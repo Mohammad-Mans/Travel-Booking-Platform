@@ -1,0 +1,10 @@
+.auth {
+  background-image: url("/src/assets/images/vista-voyage-login-blur.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  box-shadow: inset 0 0 0 1000px #66cdaa33;
+}
+
+
