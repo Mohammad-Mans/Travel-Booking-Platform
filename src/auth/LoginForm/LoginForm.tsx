@@ -1,19 +1,30 @@
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import PersonIcon from "@mui/icons-material/Person";
 import Typography from "@mui/material/Typography";
+import { Formik, Form } from "formik";
+import FormikTextField from "../../common/FormikTextField";
+import FormikSubmitButton from "../../common/FormikSubmitButton";
+import { LoginValidation } from "../../validation";
+import { useState } from "react";
+import { IconButton, InputAdornment } from "@mui/material";
+import { VisibilityOff, Visibility } from "@mui/icons-material";
 
-const LoginForm = () => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+const INITIAL_FORM_STATE = {
+  userName: "",
+  password: "",
+};
+
+const LoginForm = (): JSX.Element => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      userName: data.get("userName"),
-      password: data.get("password"),
-    });
   };
 
   return (
@@ -43,52 +54,59 @@ const LoginForm = () => {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box
-            component="form"
-            noValidate
-            onSubmit={handleSubmit}
-            sx={{ mt: 1 }}
-          >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="User Name"
-              label="User Name"
-              name="userName"
-              variant="filled"
-              color="white"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              color="white"
-              variant="filled"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
 
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              align="center"
-              sx={{ mt: 5 }}
-            >
-              {`Copyright © Vista Voyage ${new Date().getFullYear()}.`}
-            </Typography>
-          </Box>
+          <Formik
+            initialValues={{ ...INITIAL_FORM_STATE }}
+            validationSchema={LoginValidation}
+            onSubmit={(values) => {
+              console.log(values);
+            }}
+          >
+            <Form>
+              <Box sx={{ mt: 1 }}>
+                <FormikTextField
+                  name="userName"
+                  label="User Name"
+                  color="white"
+                  autoFocus
+                />
+
+                <FormikTextField
+                  name="password"
+                  label="Password"
+                  color="white"
+                  type={showPassword ? "text" : "password"}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+
+                <FormikSubmitButton sx={{ mt: 3, mb: 2 }}>
+                  Sign In
+                </FormikSubmitButton>
+              </Box>
+            </Form>
+          </Formik>
+
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            align="center"
+            sx={{ mt: 5 }}
+          >
+            {`Copyright © Vista Voyage ${new Date().getFullYear()}.`}
+          </Typography>
         </Box>
       </Grid>
     </Grid>
