@@ -7,17 +7,48 @@ import { Formik, Form } from "formik";
 import FormikTextField from "../../common/FormikTextField";
 import FormikSubmitButton from "../../common/FormikSubmitButton";
 import { LoginValidation } from "../../validation";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { IconButton, InputAdornment } from "@mui/material";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
+import AuthContext from "../../contex/AuthProvider";
+import axios from "../../api/axios";
+import { AxiosError } from "axios";
+
+const LOGIN_URL = "/api/auth/authenticate";
 
 const INITIAL_FORM_STATE = {
   userName: "",
   password: "",
 };
 
+type handleSubmitProps = {
+  userName: string;
+  password: string;
+};
+
 const LoginForm = (): JSX.Element => {
+  const { setAuth } = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleSubmit = async (values: handleSubmitProps) => {
+    try {
+      const response = await axios.post(LOGIN_URL, JSON.stringify(values), {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const accessToken = response?.data?.authentication;
+      const role = response?.data?.userType;
+      setAuth({ role, accessToken });
+    } catch (error) {
+      const axiosError = error as AxiosError;
+
+      if (!axiosError?.response) {
+        console.error("No Server Response");
+      } else if (axiosError.response?.status === 401) {
+        console.error("Unauthorized error");
+      } else [console.error("Login Failed")];
+    }
+  };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -58,9 +89,7 @@ const LoginForm = (): JSX.Element => {
           <Formik
             initialValues={{ ...INITIAL_FORM_STATE }}
             validationSchema={LoginValidation}
-            onSubmit={(values) => {
-              console.log(values);
-            }}
+            onSubmit={handleSubmit}
           >
             <Form>
               <Box sx={{ mt: 1 }}>
