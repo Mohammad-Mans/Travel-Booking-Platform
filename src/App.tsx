@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
-import { HomePage } from "./root/pages";
+import { HomePage } from "./_root/pages";
 import "./App.css";
-import LoginPage from "./auth/LoginForm/LoginForm";
-import AuthLayout from "./auth/AuthLayout";
+import LoginPage from "./_auth/LoginForm/LoginForm";
+import AuthLayout from "./_auth/AuthLayout";
 
 function App() {
   return (
@@ -17,6 +17,5 @@ function App() {
     </main>
   );
 }
-``;
 
 export default App;
