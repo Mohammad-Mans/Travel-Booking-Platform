@@ -1,18 +1,28 @@
 import { Routes, Route } from "react-router-dom";
-import { HomePage } from "./_root/pages";
-import "./App.css";
-import LoginPage from "./_auth/LoginForm/LoginForm";
 import AuthLayout from "./_auth/AuthLayout";
+import LoginForm from "./_auth/LoginForm/LoginForm";
+import MissingPage from "./_auth/Missing/MissingPage";
+import RootLayout from "./_root/RootLayout";
+import { HomePage, AdminPage } from "./_root/pages";
+import "./App.css";
 
 function App() {
   return (
     <main>
       <Routes>
         <Route element={<AuthLayout />}>
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<LoginForm />} />
         </Route>
 
-        <Route index element={<HomePage />} />
+        <Route element={<RootLayout allowedRole="User" />}>
+          <Route path="/" element={<HomePage />} />
+        </Route>
+
+        <Route element={<RootLayout allowedRole="Admin" />}>
+          <Route path="/admin" element={<AdminPage />} />
+        </Route>
+
+        <Route path="*" element={<MissingPage />} />
       </Routes>
     </main>
   );

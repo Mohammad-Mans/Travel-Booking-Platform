@@ -7,14 +7,15 @@ import { Formik, Form } from "formik";
 import FormikTextField from "../../common/FormikTextField";
 import FormikSubmitButton from "../../common/FormikSubmitButton";
 import { LoginValidation } from "../../validation";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { IconButton, InputAdornment } from "@mui/material";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
-import AuthContext from "../../contex/AuthProvider";
 import axios from "../../api/axios";
 import { AxiosError } from "axios";
+import useAuth from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
-const LOGIN_URL = "/api/auth/authenticate";
+const LOGIN_URL = import.meta.env.VITE_LOGIN_URL;
 
 const INITIAL_FORM_STATE = {
   userName: "",
@@ -27,7 +28,10 @@ type handleSubmitProps = {
 };
 
 const LoginForm = (): JSX.Element => {
-  const { setAuth } = useContext(AuthContext);
+  const { setAuth } = useAuth();
+
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (values: handleSubmitProps) => {
@@ -39,6 +43,13 @@ const LoginForm = (): JSX.Element => {
       const accessToken = response?.data?.authentication;
       const role = response?.data?.userType;
       setAuth({ role, accessToken });
+      
+      if (role === "User") {
+        navigate("/");
+      } else if (role === "Admin") {
+        navigate("/admin");
+      }
+
     } catch (error) {
       const axiosError = error as AxiosError;
 
