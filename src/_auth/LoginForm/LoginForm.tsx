@@ -18,7 +18,7 @@ const INITIAL_FORM_STATE = {
 };
 
 const LoginForm = (): JSX.Element => {
-  const { login } = useLogin();
+  const { login, loading } = useLogin();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -95,7 +95,11 @@ const LoginForm = (): JSX.Element => {
                   }}
                 />
 
-                <FormikSubmitButton sx={{ mt: 3, mb: 2 }}>
+                <FormikSubmitButton
+                  loading={loading}
+                  loadingPosition="center"
+                  sx={{ mt: 3, mb: 2 }}
+                >
                   Sign In
                 </FormikSubmitButton>
               </Box>

@@ -1,4 +1,5 @@
 import { CssBaseline, createTheme, ThemeProvider } from "@mui/material";
+import type {} from '@mui/lab/themeAugmentation';
 
 type ThemeProp = {
   children: JSX.Element;

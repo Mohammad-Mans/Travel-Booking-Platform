@@ -1,12 +1,13 @@
-import { Button, ButtonProps } from "@mui/material";
-import { useFormikContext } from "formik";
 import { FC } from "react";
+import { useFormikContext } from "formik";
+import { LoadingButton } from "@mui/lab";
+import { LoadingButtonProps } from "@mui/lab/LoadingButton";
 
-type FormikSubmitButtonProps = ButtonProps & {
+type FormikSubmitLoadingButtonProps = LoadingButtonProps & {
   children: React.ReactNode;
 };
 
-const FormikSubmitButton: FC<FormikSubmitButtonProps> = ({
+const FormikSubmitButton: FC<FormikSubmitLoadingButtonProps> = ({
   children,
   ...rest
 }) => {
@@ -16,15 +17,20 @@ const FormikSubmitButton: FC<FormikSubmitButtonProps> = ({
     submitForm();
   };
 
-  const configButton: ButtonProps = {
+  const configButton: LoadingButtonProps = {
     variant: "contained",
     color: "primary",
     fullWidth: true,
+    disableRipple: true,
     onClick: handleSubmit,
     ...rest,
   };
 
-  return <Button {...configButton}>{children}</Button>;
+  return (
+    <LoadingButton {...configButton}>
+      <span>{children}</span>
+    </LoadingButton>
+  );
 };
 
 export default FormikSubmitButton;

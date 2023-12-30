@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import AuthContext from "../contex/AuthProvider";
 import axios from "../api/axios";
 import { AxiosError } from "axios";
@@ -13,10 +13,12 @@ type loginProps = {
 
 const useLogin = () => {
   const { setAuth } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const login = async (values: loginProps) => {
     try {
+      setLoading(true);
       const response = await axios.post(LOGIN_URL, JSON.stringify(values), {
         headers: { "Content-Type": "application/json" },
       });
@@ -38,10 +40,12 @@ const useLogin = () => {
       } else if (axiosError.response?.status === 401) {
         console.error("Unauthorized error");
       } else [console.error("Login Failed")];
+    }finally{
+        setLoading(false);
     }
   };
 
-  return { login };
+  return { login , loading };
 };
 
 export default useLogin;
