@@ -1,65 +1,26 @@
+import { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import PersonIcon from "@mui/icons-material/Person";
 import Typography from "@mui/material/Typography";
+import { IconButton, InputAdornment } from "@mui/material";
+import { VisibilityOff, Visibility } from "@mui/icons-material";
 import { Formik, Form } from "formik";
 import FormikTextField from "../../common/FormikTextField";
 import FormikSubmitButton from "../../common/FormikSubmitButton";
 import { LoginValidation } from "../../validation";
-import { useState } from "react";
-import { IconButton, InputAdornment } from "@mui/material";
-import { VisibilityOff, Visibility } from "@mui/icons-material";
-import axios from "../../api/axios";
-import { AxiosError } from "axios";
-import useAuth from "../../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
-
-const LOGIN_URL = import.meta.env.VITE_LOGIN_URL;
+import useLogin from "../../hooks/useLogin";
 
 const INITIAL_FORM_STATE = {
   userName: "",
   password: "",
 };
 
-type handleSubmitProps = {
-  userName: string;
-  password: string;
-};
-
 const LoginForm = (): JSX.Element => {
-  const { setAuth } = useAuth();
-
-  const navigate = useNavigate();
+  const { login } = useLogin();
 
   const [showPassword, setShowPassword] = useState(false);
-
-  const handleSubmit = async (values: handleSubmitProps) => {
-    try {
-      const response = await axios.post(LOGIN_URL, JSON.stringify(values), {
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const accessToken = response?.data?.authentication;
-      const role = response?.data?.userType;
-      setAuth({ role, accessToken });
-      
-      if (role === "User") {
-        navigate("/");
-      } else if (role === "Admin") {
-        navigate("/admin");
-      }
-
-    } catch (error) {
-      const axiosError = error as AxiosError;
-
-      if (!axiosError?.response) {
-        console.error("No Server Response");
-      } else if (axiosError.response?.status === 401) {
-        console.error("Unauthorized error");
-      } else [console.error("Login Failed")];
-    }
-  };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -100,7 +61,9 @@ const LoginForm = (): JSX.Element => {
           <Formik
             initialValues={{ ...INITIAL_FORM_STATE }}
             validationSchema={LoginValidation}
-            onSubmit={handleSubmit}
+            onSubmit={async (values) => {
+              await login(values);
+            }}
           >
             <Form>
               <Box sx={{ mt: 1 }}>
