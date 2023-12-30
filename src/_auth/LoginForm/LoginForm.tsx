@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -11,6 +11,7 @@ import FormikTextField from "../../common/FormikTextField";
 import FormikSubmitButton from "../../common/FormikSubmitButton";
 import { LoginValidation } from "../../validation";
 import useLogin from "../../hooks/useLogin";
+import SnackbarAlert from "../../common/SnackbarAlert";
 
 const INITIAL_FORM_STATE = {
   userName: "",
@@ -18,7 +19,7 @@ const INITIAL_FORM_STATE = {
 };
 
 const LoginForm = (): JSX.Element => {
-  const { login, loading } = useLogin();
+  const { login, loading, loginError, setLoginError } = useLogin();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -102,6 +103,13 @@ const LoginForm = (): JSX.Element => {
                 >
                   Sign In
                 </FormikSubmitButton>
+
+                <SnackbarAlert
+                  open={loginError.state}
+                  onClose={() => setLoginError({ ...loginError, state: false })}
+                >
+                  <>{loginError.msg}</>
+                </SnackbarAlert>
               </Box>
             </Form>
           </Formik>

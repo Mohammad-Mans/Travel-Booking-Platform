@@ -1,8 +1,8 @@
-import { useContext, useState } from "react";
-import AuthContext from "../contex/AuthProvider";
+import { useState } from "react";
 import axios from "../api/axios";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import useAuth from "./useAuth";
 
 const LOGIN_URL = import.meta.env.VITE_LOGIN_URL;
 
@@ -12,8 +12,10 @@ type loginProps = {
 };
 
 const useLogin = () => {
-  const { setAuth } = useContext(AuthContext);
+  const { setAuth } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState({ state: false, msg: "" });
+
   const navigate = useNavigate();
 
   const login = async (values: loginProps) => {
@@ -32,20 +34,22 @@ const useLogin = () => {
       } else if (role === "Admin") {
         navigate("/admin");
       }
-    } catch (error) {
-      const axiosError = error as AxiosError;
+    } catch (err) {
+      const axiosError = err as AxiosError;
 
       if (!axiosError?.response) {
-        console.error("No Server Response");
+        setLoginError({ state: true, msg: "No Server Response" });
       } else if (axiosError.response?.status === 401) {
-        console.error("Unauthorized error");
-      } else [console.error("Login Failed")];
-    }finally{
-        setLoading(false);
+        setLoginError({ state: true, msg: "Unauthorized Access" });
+      } else {
+        setLoginError({ state: true, msg: "Login Failed" });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-  return { login , loading };
+  return { login, loading, loginError, setLoginError };
 };
 
 export default useLogin;
