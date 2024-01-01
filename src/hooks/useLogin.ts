@@ -2,7 +2,6 @@ import { useState } from "react";
 import axios from "../api/axios";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
-import useAuth from "./useAuth";
 
 const LOGIN_URL = import.meta.env.VITE_LOGIN_URL;
 
@@ -12,7 +11,6 @@ type loginProps = {
 };
 
 const useLogin = () => {
-  const { setAuth } = useAuth();
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState({ state: false, msg: "" });
 
@@ -27,7 +25,7 @@ const useLogin = () => {
 
       const accessToken = response?.data?.authentication;
       const role = response?.data?.userType;
-      setAuth({ role, accessToken });
+      localStorage.setItem('user_data', JSON.stringify({ role, accessToken }));
 
       if (role === "User") {
         navigate("/");

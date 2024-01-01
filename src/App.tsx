@@ -3,7 +3,10 @@ import AuthLayout from "./_auth/AuthLayout";
 import LoginForm from "./_auth/LoginForm/LoginForm";
 import MissingPage from "./_auth/Missing/MissingPage";
 import RootLayout from "./_root/RootLayout";
-import { HomePage, AdminPage } from "./_root/pages";
+import {
+  HomePage,
+  AdminPage,
+} from "./_root/pages";
 import "./App.css";
 
 function App() {
