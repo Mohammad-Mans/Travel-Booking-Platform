@@ -11,7 +11,7 @@ import "./App.css";
 
 function App() {
   return (
-    <main>
+    <>
       <Routes>
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginForm />} />
@@ -27,7 +27,7 @@ function App() {
 
         <Route path="*" element={<MissingPage />} />
       </Routes>
-    </main>
+    </>
   );
 }
 

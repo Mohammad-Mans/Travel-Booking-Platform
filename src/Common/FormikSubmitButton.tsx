@@ -22,6 +22,7 @@ const FormikSubmitButton: FC<FormikSubmitLoadingButtonProps> = ({
     color: "primary",
     fullWidth: true,
     disableRipple: true,
+    type: "submit",
     onClick: handleSubmit,
     ...rest,
   };

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
 import PersonIcon from "@mui/icons-material/Person";
 import Typography from "@mui/material/Typography";
 import { IconButton, InputAdornment } from "@mui/material";
@@ -10,18 +9,62 @@ import { Formik, Form } from "formik";
 import FormikTextField from "../../common/FormikTextField";
 import FormikSubmitButton from "../../common/FormikSubmitButton";
 import { LoginValidation } from "../../validation";
-import useLogin from "../../hooks/useLogin";
 import SnackbarAlert from "../../common/SnackbarAlert";
+import axios from "../../api/axios";
+import { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
+
+const LOGIN_URL = import.meta.env.VITE_LOGIN_URL;
 
 const INITIAL_FORM_STATE = {
   userName: "",
   password: "",
 };
 
+type SubmitProps = {
+  userName: string;
+  password: string;
+};
+
 const LoginForm = (): JSX.Element => {
-  const { login, loading, loginError, setLoginError } = useLogin();
+  const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState({ state: false, msg: "" });
+
+  const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+
+
+  const handleSubmit = async (values: SubmitProps) =>{
+    try {
+      setLoading(true);
+      const response = await axios.post(LOGIN_URL, JSON.stringify(values), {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const accessToken = response?.data?.authentication;
+      const role = response?.data?.userType;
+      localStorage.setItem('user_data', JSON.stringify({ role, accessToken }));
+
+      if (role === "User") {
+        navigate("/");
+      } else if (role === "Admin") {
+        navigate("/admin");
+      }
+    } catch (err) {
+      const axiosError = err as AxiosError;
+
+      if (!axiosError?.response) {
+        setLoginError({ state: true, msg: "No Server Response" });
+      } else if (axiosError.response?.status === 401) {
+        setLoginError({ state: true, msg: "Unauthorized Access" });
+      } else {
+        setLoginError({ state: true, msg: "Login Failed" });
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -32,17 +75,6 @@ const LoginForm = (): JSX.Element => {
   };
 
   return (
-    <Grid
-      container
-      component="main"
-      sx={{
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <Grid item xs={12} sm={8} md={5}>
         <Box
           sx={{
             my: 8,
@@ -62,9 +94,7 @@ const LoginForm = (): JSX.Element => {
           <Formik
             initialValues={{ ...INITIAL_FORM_STATE }}
             validationSchema={LoginValidation}
-            onSubmit={async (values) => {
-              await login(values);
-            }}
+            onSubmit={handleSubmit}
           >
             <Form>
               <Box sx={{ mt: 1 }}>
@@ -114,17 +144,7 @@ const LoginForm = (): JSX.Element => {
             </Form>
           </Formik>
 
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            align="center"
-            sx={{ mt: 5 }}
-          >
-            {`Copyright © Vista Voyage ${new Date().getFullYear()}.`}
-          </Typography>
         </Box>
-      </Grid>
-    </Grid>
   );
 };
 
