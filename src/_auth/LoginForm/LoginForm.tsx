@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import PersonIcon from "@mui/icons-material/Person";
@@ -34,8 +34,7 @@ const LoginForm = (): JSX.Element => {
 
   const [showPassword, setShowPassword] = useState(false);
 
-
-  const handleSubmit = async (values: SubmitProps) =>{
+  const handleSubmit = async (values: SubmitProps) => {
     try {
       setLoading(true);
       const response = await axios.post(LOGIN_URL, JSON.stringify(values), {
@@ -44,7 +43,7 @@ const LoginForm = (): JSX.Element => {
 
       const accessToken = response?.data?.authentication;
       const role = response?.data?.userType;
-      localStorage.setItem('user_data', JSON.stringify({ role, accessToken }));
+      localStorage.setItem("user_data", JSON.stringify({ role, accessToken }));
 
       if (role === "User") {
         navigate("/");
@@ -64,87 +63,80 @@ const LoginForm = (): JSX.Element => {
     } finally {
       setLoading(false);
     }
-  }
-
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
   };
 
   return (
-        <Box
-          sx={{
-            my: 8,
-            mx: 4,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-            <PersonIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
+    <Box
+      sx={{
+        my: 8,
+        mx: 4,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
+        <PersonIcon />
+      </Avatar>
+      <Typography component="h1" variant="h5">
+        Welcome Back!
+      </Typography>
 
-          <Formik
-            initialValues={{ ...INITIAL_FORM_STATE }}
-            validationSchema={LoginValidation}
-            onSubmit={handleSubmit}
-          >
-            <Form>
-              <Box sx={{ mt: 1 }}>
-                <FormikTextField
-                  name="userName"
-                  label="User Name"
-                  color="white"
-                  autoFocus
-                />
+      <Formik
+        initialValues={{ ...INITIAL_FORM_STATE }}
+        validationSchema={LoginValidation}
+        onSubmit={handleSubmit}
+      >
+        <Form>
+          <Box sx={{ mt: 1 }}>
+            <FormikTextField
+              name="userName"
+              label="User Name"
+              color="white"
+              autoFocus
+            />
 
-                <FormikTextField
-                  name="password"
-                  label="Password"
-                  color="white"
-                  type={showPassword ? "text" : "password"}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
+            <FormikTextField
+              name="password"
+              label="Password"
+              color="white"
+              type={showPassword ? "text" : "password"}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => setShowPassword((show) => !show)}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                      }}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-                <FormikSubmitButton
-                  loading={loading}
-                  loadingPosition="center"
-                  sx={{ mt: 3, mb: 2 }}
-                >
-                  Sign In
-                </FormikSubmitButton>
+            <FormikSubmitButton
+              loading={loading}
+              loadingPosition="center"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Sign In
+            </FormikSubmitButton>
 
-                <SnackbarAlert
-                  open={loginError.state}
-                  onClose={() => setLoginError({ ...loginError, state: false })}
-                >
-                  <>{loginError.msg}</>
-                </SnackbarAlert>
-              </Box>
-            </Form>
-          </Formik>
-
-        </Box>
+            <SnackbarAlert
+              open={loginError.state}
+              onClose={() => setLoginError({ ...loginError, state: false })}
+            >
+              <>{loginError.msg}</>
+            </SnackbarAlert>
+          </Box>
+        </Form>
+      </Formik>
+    </Box>
   );
 };
 
