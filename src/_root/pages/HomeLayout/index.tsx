@@ -21,7 +21,7 @@ function HomeLayout() {
       <AppBar component="header">
         <Toolbar>
           <IconButton onClick={() => navigate("/")}>
-            <img src={Logo} height={30} />
+            <img src={Logo} height={30} alt="Logo"/>
           </IconButton>
 
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 1 }}>
