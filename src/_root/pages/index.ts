@@ -1,3 +1,4 @@
+export { default as HomeLayout } from "./HomeLayout/index";
 export { default as HomePage } from "./Home/index";
 export { default as SearchPage } from "./Search/index";
 export { default as HotelPage } from "./Hotel/index";

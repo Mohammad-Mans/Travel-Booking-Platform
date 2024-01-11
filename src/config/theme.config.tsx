@@ -1,4 +1,5 @@
-import { CssBaseline, createTheme, ThemeProvider } from "@mui/material";
+import { ThemeProvider, createTheme } from "@mui/material/styles"
+import CssBaseline from '@mui/material/CssBaseline'
 import type {} from '@mui/lab/themeAugmentation';
 
 type ThemeProp = {
