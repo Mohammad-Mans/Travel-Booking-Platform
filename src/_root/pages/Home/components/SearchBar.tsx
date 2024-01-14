@@ -154,7 +154,7 @@ const SearchComponent = () => {
           justifyContent: "space-between",
         }}
       >
-        <Grid item xs={11.5} md={2.5} m={1}>
+        <Grid item xs={12} md={2.5} m={1}>
           {
             <Autocomplete
               freeSolo={false}
@@ -199,9 +199,19 @@ const SearchComponent = () => {
           }
         </Grid>
 
-        <Divider orientation="vertical" flexItem aria-hidden="true" />
+        <Divider
+          orientation="vertical"
+          flexItem
+          aria-hidden="true"
+          sx={{
+            display: {
+              xs: "none",
+              md: "inline-block",
+            },
+          }}
+        />
 
-        <Grid item xs={5} md={2} m={1}>
+        <Grid item xs={5.5} md={2} m={1}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
               label="Check in"
@@ -228,7 +238,7 @@ const SearchComponent = () => {
           aria-hidden="true"
         />
 
-        <Grid item xs={5} md={2} m={1}>
+        <Grid item xs={5.5} md={2} m={1}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
               label="Check out"
@@ -244,7 +254,17 @@ const SearchComponent = () => {
           </LocalizationProvider>
         </Grid>
 
-        <Divider orientation="vertical" flexItem aria-hidden="true" />
+        <Divider
+          orientation="vertical"
+          flexItem
+          aria-hidden="true"
+          sx={{
+            display: {
+              xs: "none",
+              md: "inline-block",
+            },
+          }}
+        />
 
         <Grid item xs={12} md={2.5} m={1}>
           <TextField
