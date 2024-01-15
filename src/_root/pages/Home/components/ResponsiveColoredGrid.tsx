@@ -25,6 +25,7 @@ const ResponsiveColoredGrid: FC<ResponsiveColoredGridProps> = ({
   const ConfigGridItem: GridProps = {
     xs: 11,
     lg: 9,
+    width: "100%",
     ...rest,
   };
 
