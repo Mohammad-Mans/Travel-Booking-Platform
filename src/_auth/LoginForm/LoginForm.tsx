@@ -43,7 +43,11 @@ const LoginForm = (): JSX.Element => {
 
       const accessToken = response?.data?.authentication;
       const role = response?.data?.userType;
-      localStorage.setItem("user_data", JSON.stringify({ role, accessToken }));
+      const payload = accessToken.split('.')[1];
+      const decodedPayload = JSON.parse(atob(payload));
+      const userId = decodedPayload['user_id'];
+
+      localStorage.setItem("user_data", JSON.stringify({ role, accessToken, userId }));
 
       if (role === "User") {
         navigate("/");

@@ -6,8 +6,11 @@ import { useEffect, useState } from "react";
 import axios from "../../../api/axios";
 import { AxiosError } from "axios";
 import SnackbarAlert from "../../../Common/SnackbarAlert";
+import VisitedHotelCard from "./components/VisitedHotelCard";
 
 const featuredDealsURL = import.meta.env.VITE_GET_FEATURED_DEALS;
+const recentlyVisitedHotelsURL = import.meta.env
+  .VITE_GET_RECENTLY_VISITED_HOTELS;
 
 type FeaturedDeals = {
   hotelId: number;
@@ -20,6 +23,17 @@ type FeaturedDeals = {
   discount: number;
 };
 
+type recentlyVisitedHotels = {
+  hotelId: number;
+  hotelName: string;
+  starRating: number;
+  visitDate: string;
+  cityName: string;
+  thumbnailUrl: string;
+  priceLowerBound: number;
+  priceUpperBound: number;
+};
+
 type SnackbarError = {
   state: boolean;
   message: string;
@@ -27,6 +41,8 @@ type SnackbarError = {
 
 const HomePage = () => {
   const [featuredDeals, setFeaturedDeals] = useState<FeaturedDeals[]>();
+  const [recentlyVisitedHotels, setRecentlyVisitedHotels] =
+    useState<recentlyVisitedHotels[]>();
   const [error, setError] = useState<SnackbarError>({
     state: false,
     message: "",
@@ -47,7 +63,38 @@ const HomePage = () => {
     }
   };
 
+  const getRecentlyVisitedHotels = async () => {
+    const userData = JSON.parse(localStorage.getItem("user_data")!);
+    const accessToken = userData.accessToken;
+    const userId = userData.userId;
+
+    try {
+      const response = await axios.get(
+        recentlyVisitedHotelsURL + userId + "/recent-hotels",
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      setRecentlyVisitedHotels(response?.data);
+    } catch (err) {
+      const axiosError = err as AxiosError;
+
+      if (!axiosError?.response) {
+        setError({ state: true, message: "No Server Response" });
+      } else {
+        setError({
+          state: true,
+          message: "Couldn't fetch recently visited hotels",
+        });
+      }
+    }
+  };
+
   useEffect(() => {
+    getRecentlyVisitedHotels();
     getFeaturedDeals();
   }, []);
 
@@ -80,6 +127,22 @@ const HomePage = () => {
             return (
               <Grid item key={deal.hotelId}>
                 <FeaturedDealsCard {...deal} />
+              </Grid>
+            );
+          })}
+        </Grid>
+      </ResponsiveColoredGrid>
+
+      <ResponsiveColoredGrid>
+        <Typography variant="h4" pb={3}>
+          Recently viewed
+        </Typography>
+
+        <Grid container spacing={4} flexDirection="row" justifyContent="center">
+          {recentlyVisitedHotels?.slice(0, 3).map((hotel) => {
+            return (
+              <Grid item key={hotel.hotelId}>
+                <VisitedHotelCard {...hotel} />
               </Grid>
             );
           })}
