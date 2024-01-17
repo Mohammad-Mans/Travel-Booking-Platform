@@ -112,7 +112,7 @@ const FeaturedDealsCard: React.FC<CardProps> = ({
                 minWidth: "40px",
                 border: 1,
                 borderColor: "primary.main",
-                borderRadius: 100,
+                borderRadius: 1,
               }}
             >
               ${finalPrice}

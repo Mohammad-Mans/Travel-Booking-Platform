@@ -7,10 +7,12 @@ import axios from "../../../api/axios";
 import { AxiosError } from "axios";
 import SnackbarAlert from "../../../Common/SnackbarAlert";
 import VisitedHotelCard from "./components/VisitedHotelCard";
+import DestinationCard from "./components/TrendingDestinationCard";
 
 const featuredDealsURL = import.meta.env.VITE_GET_FEATURED_DEALS;
 const recentlyVisitedHotelsURL = import.meta.env
   .VITE_GET_RECENTLY_VISITED_HOTELS;
+const trendingDestinationURL = import.meta.env.VITE_GET_TRENDING_DESTINATION;
 
 type FeaturedDeals = {
   hotelId: number;
@@ -34,6 +36,14 @@ type recentlyVisitedHotels = {
   priceUpperBound: number;
 };
 
+type TrendingDestination = {
+  cityId: number;
+  cityName: string;
+  countryName: string;
+  description: string;
+  thumbnailUrl: string;
+};
+
 type SnackbarError = {
   state: boolean;
   message: string;
@@ -43,6 +53,8 @@ const HomePage = () => {
   const [featuredDeals, setFeaturedDeals] = useState<FeaturedDeals[]>();
   const [recentlyVisitedHotels, setRecentlyVisitedHotels] =
     useState<recentlyVisitedHotels[]>();
+  const [trendingDestination, setTrendingDestination] =
+    useState<TrendingDestination[]>();
   const [error, setError] = useState<SnackbarError>({
     state: false,
     message: "",
@@ -93,9 +105,25 @@ const HomePage = () => {
     }
   };
 
+  const getTrendingDestination = async () => {
+    try {
+      const response = await axios.get(trendingDestinationURL);
+      setTrendingDestination(response?.data);
+    } catch (err) {
+      const axiosError = err as AxiosError;
+
+      if (!axiosError?.response) {
+        setError({ state: true, message: "No Server Response" });
+      } else {
+        setError({ state: true, message: "Couldn't fetch trending destinations" });
+      }
+    }
+  };
+
   useEffect(() => {
     getRecentlyVisitedHotels();
     getFeaturedDeals();
+    getTrendingDestination();
   }, []);
 
   return (
@@ -133,7 +161,7 @@ const HomePage = () => {
         </Grid>
       </ResponsiveColoredGrid>
 
-      <ResponsiveColoredGrid>
+      <ResponsiveColoredGrid color="white.main">
         <Typography variant="h4" pb={3}>
           Recently viewed
         </Typography>
@@ -143,6 +171,22 @@ const HomePage = () => {
             return (
               <Grid item key={hotel.hotelId}>
                 <VisitedHotelCard {...hotel} />
+              </Grid>
+            );
+          })}
+        </Grid>
+      </ResponsiveColoredGrid>
+
+      <ResponsiveColoredGrid color="white.main">
+        <Typography variant="h4" pb={3}>
+          Trending Destinations
+        </Typography>
+
+        <Grid container spacing={4} flexDirection="row" justifyContent="center">
+          {trendingDestination?.map((destination) => {
+            return (
+              <Grid item key={destination.cityId}>
+                <DestinationCard {...destination} />
               </Grid>
             );
           })}
