@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, CircularProgress, Grid, Typography } from "@mui/material";
 import SearchBar from "./components/SearchBar";
 import ResponsiveColoredGrid from "./components/ResponsiveColoredGrid";
 import FeaturedDealsCard from "./components/FeaturedDealsCard";
@@ -61,6 +61,12 @@ const HomePage = () => {
     message: "",
   });
 
+  const [loadingFeaturedDeals, setLoadingFeaturedDeals] = useState(true);
+  const [loadingRecentlyVisitedHotels, setLoadingRecentlyVisitedHotels] =
+    useState(true);
+  const [loadingTrendingDestination, setLoadingTrendingDestination] =
+    useState(true);
+
   const getFeaturedDeals = async () => {
     try {
       const response = await axios.get(featuredDealsURL);
@@ -73,6 +79,8 @@ const HomePage = () => {
       } else {
         setError({ state: true, message: "Couldn't fetch featured deals" });
       }
+    } finally {
+      setLoadingFeaturedDeals(false);
     }
   };
 
@@ -103,6 +111,8 @@ const HomePage = () => {
           message: "Couldn't fetch recently visited hotels",
         });
       }
+    } finally {
+      setLoadingRecentlyVisitedHotels(false);
     }
   };
 
@@ -121,6 +131,8 @@ const HomePage = () => {
           message: "Couldn't fetch trending destinations",
         });
       }
+    } finally {
+      setLoadingTrendingDestination(false);
     }
   };
 
@@ -156,59 +168,92 @@ const HomePage = () => {
         <SearchBar />
       </ResponsiveColoredGrid>
 
-      <ResponsiveColoredGrid color="white.main">
-        <SectionHeader title="Featured Deals" />
-
-        <Grid container spacing={4} flexDirection="row" justifyContent="center">
-          {featuredDeals?.map((deal) => {
-            return (
-              <Grid item key={deal.hotelId}>
-                <FeaturedDealsCard {...deal} />
-              </Grid>
-            );
-          })}
-        </Grid>
-      </ResponsiveColoredGrid>
-
-      <ResponsiveColoredGrid color="white.main">
-        <SectionHeader title="Recently viewed" />
-
-        <Grid container spacing={4} flexDirection="row" justifyContent="center">
-          {recentlyVisitedHotels?.slice(0, 3).map((hotel) => {
-            return (
-              <Grid item key={hotel.hotelId}>
-                <VisitedHotelCard {...hotel} />
-              </Grid>
-            );
-          })}
-        </Grid>
-      </ResponsiveColoredGrid>
-
-      <ResponsiveColoredGrid color="white.main">
-        <SectionHeader title="Trending Destinations" />
-
-        <Grid container spacing={4} flexDirection="row" justifyContent="center">
-          {trendingDestination?.map((destination) => {
-            return (
-              <Grid item key={destination.cityId}>
-                <DestinationCard {...destination} />
-              </Grid>
-            );
-          })}
-        </Grid>
-      </ResponsiveColoredGrid>
-
-      <ResponsiveColoredGrid component="footer" color="secondary.light" py={2}>
-        <Typography
-          variant="body1"
-          color="text.secondary"
-          align="right"
-          width="100%"
+      {loadingFeaturedDeals ||
+      loadingRecentlyVisitedHotels ||
+      loadingTrendingDestination ? (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="400px"
         >
-          {`Copyright © Vista Voyage ${new Date().getFullYear()}.`}
-        </Typography>
-      </ResponsiveColoredGrid>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <>
+          <ResponsiveColoredGrid color="white.main">
+            <SectionHeader title="Featured Deals" />
 
+            <Grid
+              container
+              spacing={4}
+              flexDirection="row"
+              justifyContent="center"
+            >
+              {featuredDeals?.map((deal) => {
+                return (
+                  <Grid item key={deal.hotelId}>
+                    <FeaturedDealsCard {...deal} />
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </ResponsiveColoredGrid>
+
+          <ResponsiveColoredGrid color="white.main">
+            <SectionHeader title="Recently viewed" />
+
+            <Grid
+              container
+              spacing={4}
+              flexDirection="row"
+              justifyContent="center"
+            >
+              {recentlyVisitedHotels?.slice(0, 3).map((hotel) => {
+                return (
+                  <Grid item key={hotel.hotelId}>
+                    <VisitedHotelCard {...hotel} />
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </ResponsiveColoredGrid>
+
+          <ResponsiveColoredGrid color="white.main">
+            <SectionHeader title="Trending Destinations" />
+
+            <Grid
+              container
+              spacing={4}
+              flexDirection="row"
+              justifyContent="center"
+            >
+              {trendingDestination?.map((destination) => {
+                return (
+                  <Grid item key={destination.cityId}>
+                    <DestinationCard {...destination} />
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </ResponsiveColoredGrid>
+
+          <ResponsiveColoredGrid
+            component="footer"
+            color="secondary.light"
+            py={2}
+          >
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              align="right"
+              width="100%"
+            >
+              {`Copyright © Vista Voyage ${new Date().getFullYear()}.`}
+            </Typography>
+          </ResponsiveColoredGrid>
+        </>
+      )}
       <SnackbarAlert
         open={error.state}
         onClose={() => setError({ ...error, state: false })}
