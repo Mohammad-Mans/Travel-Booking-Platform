@@ -1,4 +1,4 @@
-import { Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import SearchBar from "./components/SearchBar";
 import ResponsiveColoredGrid from "./components/ResponsiveColoredGrid";
 import FeaturedDealsCard from "./components/FeaturedDealsCard";
@@ -8,6 +8,7 @@ import { AxiosError } from "axios";
 import SnackbarAlert from "../../../Common/SnackbarAlert";
 import VisitedHotelCard from "./components/VisitedHotelCard";
 import DestinationCard from "./components/TrendingDestinationCard";
+import SectionHeader from "./components/SectionHeader";
 
 const featuredDealsURL = import.meta.env.VITE_GET_FEATURED_DEALS;
 const recentlyVisitedHotelsURL = import.meta.env
@@ -115,7 +116,10 @@ const HomePage = () => {
       if (!axiosError?.response) {
         setError({ state: true, message: "No Server Response" });
       } else {
-        setError({ state: true, message: "Couldn't fetch trending destinations" });
+        setError({
+          state: true,
+          message: "Couldn't fetch trending destinations",
+        });
       }
     }
   };
@@ -137,19 +141,24 @@ const HomePage = () => {
       }}
     >
       <ResponsiveColoredGrid>
+        <Box
+          component="header"
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          pb={4}
+        >
+          <Typography variant="h3">Greetings, Travel Enthusiasts!</Typography>
+          <Typography variant="h5">
+            Start Your Next Adventure with Vista Voyage!
+          </Typography>
+        </Box>
         <SearchBar />
-        <Typography variant="h3" pt={4}>
-          Greetings, Travel Enthusiasts!
-        </Typography>
-        <Typography variant="h5">
-          Start Your Next Adventure with Vista Voyage!
-        </Typography>
       </ResponsiveColoredGrid>
 
       <ResponsiveColoredGrid color="white.main">
-        <Typography variant="h4" pb={3}>
-          Featured Deals
-        </Typography>
+        <SectionHeader title="Featured Deals" />
+
         <Grid container spacing={4} flexDirection="row" justifyContent="center">
           {featuredDeals?.map((deal) => {
             return (
@@ -162,9 +171,7 @@ const HomePage = () => {
       </ResponsiveColoredGrid>
 
       <ResponsiveColoredGrid color="white.main">
-        <Typography variant="h4" pb={3}>
-          Recently viewed
-        </Typography>
+        <SectionHeader title="Recently viewed" />
 
         <Grid container spacing={4} flexDirection="row" justifyContent="center">
           {recentlyVisitedHotels?.slice(0, 3).map((hotel) => {
@@ -178,9 +185,7 @@ const HomePage = () => {
       </ResponsiveColoredGrid>
 
       <ResponsiveColoredGrid color="white.main">
-        <Typography variant="h4" pb={3}>
-          Trending Destinations
-        </Typography>
+        <SectionHeader title="Trending Destinations" />
 
         <Grid container spacing={4} flexDirection="row" justifyContent="center">
           {trendingDestination?.map((destination) => {
@@ -191,6 +196,17 @@ const HomePage = () => {
             );
           })}
         </Grid>
+      </ResponsiveColoredGrid>
+
+      <ResponsiveColoredGrid component="footer" color="secondary.light" py={2}>
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          align="right"
+          width="100%"
+        >
+          {`Copyright © Vista Voyage ${new Date().getFullYear()}.`}
+        </Typography>
       </ResponsiveColoredGrid>
 
       <SnackbarAlert

@@ -10,11 +10,14 @@ import React from "react";
 const ResponsiveColoredGrid: FC<ResponsiveColoredGridProps> = ({
   children,
   color,
+  component = "section",
+  py = 4,
   ...rest
 }) => {
   const ConfigGridContainer: GridProps = {
+    component: component,
     bgcolor: color,
-    py: 4,
+    py: py,
     sx: {
       display: "flex",
       flexDirection: "column",
