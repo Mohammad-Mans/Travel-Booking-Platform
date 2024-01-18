@@ -36,6 +36,10 @@ const VisitedHotelCard: React.FC<CardProps> = ({
         sx={{
           display: "flex",
           justifyContent: "space-between",
+          ":hover": {
+            boxShadow: 12,
+            cursor: "pointer",
+          },
         }}
       >
         <CardMedia

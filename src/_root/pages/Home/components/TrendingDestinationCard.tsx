@@ -11,7 +11,15 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
   thumbnailUrl,
 }) => {
   return (
-    <Card elevation={5}>
+    <Card
+      elevation={5}
+      sx={{
+        ":hover": {
+          boxShadow: 20,
+          cursor: "pointer",
+        },
+      }}
+    >
       <Box sx={{ position: "relative" }}>
         <CardMedia
           component="img"

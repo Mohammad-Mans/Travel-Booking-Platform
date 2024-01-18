@@ -37,6 +37,10 @@ const FeaturedDealsCard: React.FC<CardProps> = ({
           display: "flex",
           flexDirection: { xs: "row", sm: "column" },
           justifyContent: "space-between",
+          ":hover": {
+            boxShadow: 12,
+            cursor: "pointer",
+          },
         }}
       >
         <CardMedia
