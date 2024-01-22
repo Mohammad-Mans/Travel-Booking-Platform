@@ -23,6 +23,7 @@ import { AxiosError } from "axios";
 import SnackbarAlert from "../../../../Common/SnackbarAlert";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { useNavigate } from "react-router-dom";
 
 type City = {
   name: string;
@@ -40,8 +41,17 @@ type GuestsAndRooms = {
   popoverOpen: boolean;
 };
 
-const SearchComponent = () => {
-  const [city, setCity] = useState<string | null>(null);
+type SearchComponentProps = {
+  city?: string;
+  checkInDate?: string | null;
+  checkOutDate?: string | null;
+  adults?: string | null;
+  children?: string | null;
+  numberOfRooms?: string | null;
+};
+
+const SearchComponent: React.FC<SearchComponentProps> = (props) => {
+  const [city, setCity] = useState<string | null>(props.city || null);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
   const [autocompleteOptions, setautocompleteOptions] = useState<
     readonly string[]
@@ -95,14 +105,18 @@ const SearchComponent = () => {
     const today = dayjs(new Date());
     const tomorrow = today.add(1, "day");
 
-    setCheckIn(today);
-    setCheckOut(tomorrow);
-  }, []);
+    props.checkInDate
+      ? setCheckIn(dayjs(props.checkInDate, { format: "YYYY-MM-DD" }))
+      : setCheckIn(today);
+    props.checkOutDate
+      ? setCheckOut(dayjs(props.checkOutDate, { format: "YYYY-MM-DD" }))
+      : setCheckOut(tomorrow);
+  }, [props.checkInDate, props.checkOutDate]);
 
   const [guestsAndRooms, setGuestsAndRooms] = useState<GuestsAndRooms>({
-    adults: 2,
-    children: 0,
-    rooms: 1,
+    adults: Number(props.adults) || 2,
+    children: Number(props.children) || 0,
+    rooms: Number(props.numberOfRooms) || 1,
     popoverOpen: false,
   });
 
@@ -142,7 +156,19 @@ const SearchComponent = () => {
     message: "",
   });
 
-  const handleSearch = () => {};
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    const searchQuery = `city=${city ? city : ""}&checkInDate=${checkIn?.format(
+      "YYYY-MM-DD"
+    )}&checkOutDate=${checkOut?.format("YYYY-MM-DD")}&adults=${
+      guestsAndRooms.adults
+    }&children=${guestsAndRooms.children}&numberOfRooms=${
+      guestsAndRooms.rooms
+    }`;
+
+    navigate(`/search?${searchQuery}`);
+  };
 
   return (
     <Paper elevation={4}>

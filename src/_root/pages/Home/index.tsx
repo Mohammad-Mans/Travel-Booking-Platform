@@ -1,6 +1,6 @@
 import { Box, CircularProgress, Grid, Typography } from "@mui/material";
 import SearchBar from "./components/SearchBar";
-import ResponsiveColoredGrid from "./components/ResponsiveColoredGrid";
+import ResponsiveColoredGrid from "../../../Common/ResponsiveColoredGrid";
 import FeaturedDealsCard from "./components/FeaturedDealsCard";
 import { useEffect, useState } from "react";
 import axios from "../../../api/axios";
@@ -143,16 +143,8 @@ const HomePage = () => {
   }, []);
 
   return (
-    <Grid
-      container
-      bgcolor="#f9f9f9"
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <ResponsiveColoredGrid>
+    <>
+      <ResponsiveColoredGrid color="#f9f9f9">
         <Box
           component="header"
           display="flex"
@@ -260,7 +252,7 @@ const HomePage = () => {
       >
         <>{error.message}</>
       </SnackbarAlert>
-    </Grid>
+    </>
   );
 };
 
