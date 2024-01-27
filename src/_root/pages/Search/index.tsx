@@ -25,6 +25,8 @@ import HotelCard from "./Components/HotelCard";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import { AxiosError } from "axios";
+import { useSnackbarError } from "../../../context/SnackbarErrorProvider";
 
 const homeSearchURL = import.meta.env.VITE_HOME_SEARCH_URL;
 const getSearchResultsAmenities = import.meta.env
@@ -70,6 +72,7 @@ const defaultFilters: Filters = {
 };
 
 const SearchPage = () => {
+  const { setErrorMessage } = useSnackbarError();
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [loadingResutls, setLoadingResults] = useState<boolean>(true);
@@ -85,7 +88,13 @@ const SearchPage = () => {
         setFilters(defaultFilters);
         setSearchResults(searchData);
       } catch (err) {
-        //
+        const axiosError = err as AxiosError;
+
+        if (!axiosError?.response) {
+          setErrorMessage("No Server Response");
+        } else {
+          setErrorMessage("Couldn't fetch Search Results");
+        }
       } finally {
         setLoadingResults(false);
       }
@@ -127,7 +136,13 @@ const SearchPage = () => {
         );
         setAmenities(amenitiesNames);
       } catch (err) {
-        //
+        const axiosError = err as AxiosError;
+
+        if (!axiosError?.response) {
+          setErrorMessage("No Server Response");
+        } else {
+          setErrorMessage("Couldn't fetch Amenities");
+        }
       }
     })();
   }, []);

@@ -9,10 +9,10 @@ import { Formik, Form } from "formik";
 import FormikTextField from "../../Common/FormikTextField";
 import FormikSubmitButton from "../../Common/FormikSubmitButton";
 import { LoginValidation } from "../../validation";
-import SnackbarAlert from "../../Common/SnackbarAlert";
 import axios from "../../api/axios";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import { useSnackbarError } from "../../context/SnackbarErrorProvider";
 
 const LOGIN_URL = import.meta.env.VITE_LOGIN_URL;
 
@@ -28,7 +28,7 @@ type SubmitProps = {
 
 const LoginForm = (): JSX.Element => {
   const [loading, setLoading] = useState(false);
-  const [loginError, setLoginError] = useState({ state: false, msg: "" });
+  const { setErrorMessage } = useSnackbarError();
 
   const navigate = useNavigate();
 
@@ -43,11 +43,14 @@ const LoginForm = (): JSX.Element => {
 
       const accessToken = response?.data?.authentication;
       const role = response?.data?.userType;
-      const payload = accessToken.split('.')[1];
+      const payload = accessToken.split(".")[1];
       const decodedPayload = JSON.parse(atob(payload));
-      const userId = decodedPayload['user_id'];
+      const userId = decodedPayload["user_id"];
 
-      localStorage.setItem("user_data", JSON.stringify({ role, accessToken, userId }));
+      localStorage.setItem(
+        "user_data",
+        JSON.stringify({ role, accessToken, userId })
+      );
 
       if (role === "User") {
         navigate("/");
@@ -58,11 +61,11 @@ const LoginForm = (): JSX.Element => {
       const axiosError = err as AxiosError;
 
       if (!axiosError?.response) {
-        setLoginError({ state: true, msg: "No Server Response" });
+        setErrorMessage("No Server Response");
       } else if (axiosError.response?.status === 401) {
-        setLoginError({ state: true, msg: "Unauthorized Access" });
+        setErrorMessage("Unauthorized Access");
       } else {
-        setLoginError({ state: true, msg: "Login Failed" });
+        setErrorMessage("Login Failed");
       }
     } finally {
       setLoading(false);
@@ -130,13 +133,6 @@ const LoginForm = (): JSX.Element => {
             >
               Sign In
             </FormikSubmitButton>
-
-            <SnackbarAlert
-              open={loginError.state}
-              onClose={() => setLoginError({ ...loginError, state: false })}
-            >
-              <>{loginError.msg}</>
-            </SnackbarAlert>
           </Box>
         </Form>
       </Formik>

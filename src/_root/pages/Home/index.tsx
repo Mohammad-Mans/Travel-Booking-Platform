@@ -5,7 +5,7 @@ import FeaturedDealsCard from "./components/FeaturedDealsCard";
 import { useEffect, useState } from "react";
 import axios from "../../../api/axios";
 import { AxiosError } from "axios";
-import SnackbarAlert from "../../../Common/SnackbarAlert";
+import { useSnackbarError } from "../../../context/SnackbarErrorProvider";
 import VisitedHotelCard from "./components/VisitedHotelCard";
 import DestinationCard from "./components/TrendingDestinationCard";
 import SectionHeader from "./components/SectionHeader";
@@ -45,21 +45,13 @@ type TrendingDestination = {
   thumbnailUrl: string;
 };
 
-type SnackbarError = {
-  state: boolean;
-  message: string;
-};
-
 const HomePage = () => {
+  const { setErrorMessage } = useSnackbarError();
   const [featuredDeals, setFeaturedDeals] = useState<FeaturedDeals[]>();
   const [recentlyVisitedHotels, setRecentlyVisitedHotels] =
     useState<recentlyVisitedHotels[]>();
   const [trendingDestination, setTrendingDestination] =
     useState<TrendingDestination[]>();
-  const [error, setError] = useState<SnackbarError>({
-    state: false,
-    message: "",
-  });
 
   const [loadingFeaturedDeals, setLoadingFeaturedDeals] = useState(true);
   const [loadingRecentlyVisitedHotels, setLoadingRecentlyVisitedHotels] =
@@ -75,9 +67,9 @@ const HomePage = () => {
       const axiosError = err as AxiosError;
 
       if (!axiosError?.response) {
-        setError({ state: true, message: "No Server Response" });
+        setErrorMessage("No Server Response");
       } else {
-        setError({ state: true, message: "Couldn't fetch featured deals" });
+        setErrorMessage("Couldn't fetch featured deals");
       }
     } finally {
       setLoadingFeaturedDeals(false);
@@ -104,12 +96,9 @@ const HomePage = () => {
       const axiosError = err as AxiosError;
 
       if (!axiosError?.response) {
-        setError({ state: true, message: "No Server Response" });
+        setErrorMessage("No Server Response");
       } else {
-        setError({
-          state: true,
-          message: "Couldn't fetch recently visited hotels",
-        });
+        setErrorMessage("Couldn't fetch recently visited hotels");
       }
     } finally {
       setLoadingRecentlyVisitedHotels(false);
@@ -124,12 +113,9 @@ const HomePage = () => {
       const axiosError = err as AxiosError;
 
       if (!axiosError?.response) {
-        setError({ state: true, message: "No Server Response" });
+        setErrorMessage("No Server Response");
       } else {
-        setError({
-          state: true,
-          message: "Couldn't fetch trending destinations",
-        });
+        setErrorMessage("Couldn't fetch trending destinations");
       }
     } finally {
       setLoadingTrendingDestination(false);
@@ -246,12 +232,6 @@ const HomePage = () => {
           </ResponsiveColoredGrid>
         </>
       )}
-      <SnackbarAlert
-        open={error.state}
-        onClose={() => setError({ ...error, state: false })}
-      >
-        <>{error.message}</>
-      </SnackbarAlert>
     </>
   );
 };
