@@ -1,16 +1,18 @@
-import { ThemeProvider, createTheme } from "@mui/material/styles"
-import CssBaseline from '@mui/material/CssBaseline'
-import type {} from '@mui/lab/themeAugmentation';
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import type {} from "@mui/lab/themeAugmentation";
 
 type ThemeProp = {
   children: JSX.Element;
 };
 
 enum themePalette {
-  MintGreen = "#66cdaa",
-  White = "#fff",
+  MintGreen = "#66CDAA",
+  White = "#FFF",
   Black = "#000",
   Gray = "#808080",
+  LightGray = "#F8F8F8",
+  OffWhite = "#FDFDFD",
 }
 
 const theme = createTheme({
@@ -22,12 +24,18 @@ const theme = createTheme({
     secondary: {
       main: themePalette.Gray,
     },
-    white:{
-        main: themePalette.White
+    white: {
+      main: themePalette.White,
     },
-    black:{
-        main: themePalette.Black
-    }
+    black: {
+      main: themePalette.Black,
+    },
+    darkBackground: {
+      main: themePalette.LightGray,
+    },
+    lightBackground: {
+      main: themePalette.OffWhite,
+    },
   },
 });
 

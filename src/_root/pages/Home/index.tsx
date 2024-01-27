@@ -130,7 +130,7 @@ const HomePage = () => {
 
   return (
     <>
-      <ResponsiveColoredGrid color="#f9f9f9">
+      <ResponsiveColoredGrid color="darkBackground.main">
         <Box
           component="header"
           display="flex"
@@ -159,7 +159,7 @@ const HomePage = () => {
         </Box>
       ) : (
         <>
-          <ResponsiveColoredGrid color="white.main">
+          <ResponsiveColoredGrid color="lightBackground.main">
             <SectionHeader title="Featured Deals" />
 
             <Grid
@@ -178,7 +178,7 @@ const HomePage = () => {
             </Grid>
           </ResponsiveColoredGrid>
 
-          <ResponsiveColoredGrid color="white.main">
+          <ResponsiveColoredGrid color="lightBackground.main">
             <SectionHeader title="Recently viewed" />
 
             <Grid
@@ -197,7 +197,7 @@ const HomePage = () => {
             </Grid>
           </ResponsiveColoredGrid>
 
-          <ResponsiveColoredGrid color="white.main">
+          <ResponsiveColoredGrid color="lightBackground.main">
             <SectionHeader title="Trending Destinations" />
 
             <Grid

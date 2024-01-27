@@ -227,11 +227,11 @@ const SearchPage = () => {
 
   return (
     <>
-      <ResponsiveColoredGrid color="#f9f9f9">
+      <ResponsiveColoredGrid color="darkBackground.main">
         <SearchBar {...Object.fromEntries([...searchParams])} />
       </ResponsiveColoredGrid>
 
-      <ResponsiveColoredGrid color="white.main">
+      <ResponsiveColoredGrid color="lightBackground.main">
         <Grid container sx={{ position: "relative" }}>
           <Grid
             item
@@ -479,7 +479,13 @@ const SearchPage = () => {
             </Popover>
           </Grid>
 
-          <Grid item xs={12} md={9} minHeight="85vh" bgcolor="white.main">
+          <Grid
+            item
+            xs={12}
+            md={9}
+            minHeight="85vh"
+            bgcolor="lightBackground.main"
+          >
             {loadingResutls ? (
               <Box
                 display="flex"

@@ -20,18 +20,13 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs, { Dayjs } from "dayjs";
 import axios from "../../../../api/axios";
 import { AxiosError } from "axios";
-import SnackbarAlert from "../../../../Common/SnackbarAlert";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { useNavigate } from "react-router-dom";
+import { useSnackbarError } from "../../../../context/SnackbarErrorProvider";
 
 type City = {
   name: string;
-};
-
-type SearchError = {
-  state: boolean;
-  message: string;
 };
 
 type GuestsAndRooms = {
@@ -51,6 +46,8 @@ type SearchComponentProps = {
 };
 
 const SearchComponent: React.FC<SearchComponentProps> = (props) => {
+  const { setErrorMessage } = useSnackbarError();
+
   const [city, setCity] = useState<string | null>(props.city || null);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
   const [autocompleteOptions, setautocompleteOptions] = useState<
@@ -80,9 +77,9 @@ const SearchComponent: React.FC<SearchComponentProps> = (props) => {
         const axiosError = err as AxiosError;
 
         if (!axiosError?.response) {
-          setError({ state: true, message: "No Server Response" });
+          setErrorMessage("No Server Response");
         } else {
-          setError({ state: true, message: "Couldn't fetch cities" });
+          setErrorMessage("Couldn't fetch cities");
         }
       }
     })();
@@ -150,11 +147,6 @@ const SearchComponent: React.FC<SearchComponentProps> = (props) => {
   const handleResetGuestsAndRooms = () => {
     setGuestsAndRooms({ ...guestsAndRooms, adults: 2, children: 0, rooms: 1 });
   };
-
-  const [error, setError] = useState<SearchError>({
-    state: false,
-    message: "",
-  });
 
   const navigate = useNavigate();
 
@@ -527,13 +519,6 @@ const SearchComponent: React.FC<SearchComponentProps> = (props) => {
           </Button>
         </Grid>
       </Grid>
-
-      <SnackbarAlert
-        open={error.state}
-        onClose={() => setError({ ...error, state: false })}
-      >
-        <>{error.message}</>
-      </SnackbarAlert>
     </Paper>
   );
 };
