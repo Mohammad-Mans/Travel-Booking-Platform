@@ -10,6 +10,7 @@ import {
   SearchPage,
   CheckoutPage,
   ConfirmationPage,
+  HotelPage,
 } from "./_root/pages";
 import "./App.css";
 
@@ -22,8 +23,9 @@ function App() {
 
       <Route element={<RootLayout allowedRole="User" />}>
         <Route path="/" element={<HomeLayout />}>
-          <Route path="/" element={<HomePage />} />
+          <Route index element={<HomePage />} />
           <Route path="Search" element={<SearchPage />} />
+          <Route path="hotel/:hotelId" element={<HotelPage />} />
           <Route path="checkout" element={<CheckoutPage />} />
           <Route path="confirmation" element={<ConfirmationPage />} />
         </Route>
