@@ -255,7 +255,6 @@ const HotelPage = () => {
                             display: "flex",
                             justifyContent: "space-between",
                             alignItems: "center",
-
                             p: 2,
                             borderRadius: 1,
                           }}
@@ -329,6 +328,8 @@ const HotelPage = () => {
                     xs: "100vw",
                     md: "auto",
                   },
+                  maxHeight: "100vh",
+                  maxWidth: "100vw",
                   boxShadow: 24,
                   outline: "none",
                 }}
@@ -337,10 +338,12 @@ const HotelPage = () => {
                   <img
                     src={selectedImage}
                     style={{
-                      objectFit: "cover",
+                      objectFit: "contain",
                       verticalAlign: "bottom",
                       width: "100%",
                       height: "100%",
+                      maxHeight: "100vh",
+                      maxWidth: "100vw",
                     }}
                   />
                 )}
