@@ -34,7 +34,10 @@ function App() {
           <Route path="Search" element={<SearchPage />} />
           <Route path="hotel/:hotelId" element={<HotelPage />} />
           <Route path="checkout" element={<CheckoutPage />} />
-          <Route path="confirmation" element={<ConfirmationPage />} />
+          <Route
+            path="confirmation/:confirmationNumber"
+            element={<ConfirmationPage />}
+          />
         </Route>
       </Route>
 

@@ -11,17 +11,22 @@ const ResponsiveColoredGrid: FC<ResponsiveColoredGridProps> = ({
   children,
   color,
   component = "section",
+  minHeight,
+  height,
   py = 4,
   ...rest
 }) => {
   const ConfigGridContainer: GridProps = {
-    component: component,
+    component,
+    minHeight,
+    height,
     bgcolor: color,
-    py: py,
+    py,
     sx: {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
+      justifyContent: "center",
     },
   };
 

@@ -1,9 +1,9 @@
 import React from "react";
 import { Typography, Box } from "@mui/material";
 
-interface SectionHeaderProps {
+type SectionHeaderProps = {
   title: string;
-}
+};
 
 const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => {
   return (

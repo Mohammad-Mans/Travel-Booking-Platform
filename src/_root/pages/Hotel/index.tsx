@@ -17,12 +17,17 @@ import {
 import ResponsiveColoredGrid from "../../../Common/ResponsiveColoredGrid";
 import PlaceIcon from "@mui/icons-material/Place";
 import CloseIcon from "@mui/icons-material/Close";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../../api/axios";
 import { useSnackbarError } from "../../../context/SnackbarErrorProvider";
 import { AxiosError } from "axios";
 import { GoogleMap, useLoadScript, MarkerF } from "@react-google-maps/api";
 import CustomerReview from "./components/CustomerReview";
+import { useBookings } from "../../../context/BookingsProvider";
+import { DesktopDatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs, { Dayjs } from "dayjs";
 
 const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
@@ -118,6 +123,10 @@ const HotelPage = () => {
   const [openImageModal, setOpenImageModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+  const [openBookingModal, setOpenBookingModal] = useState(false);
+  const [checkIn, setCheckIn] = useState<Dayjs | null>(null);
+  const [checkOut, setCheckOut] = useState<Dayjs | null>(null);
+
   const handleOpenImage = (imageURL: string) => {
     setSelectedImage(imageURL);
     setOpenImageModal(true);
@@ -166,7 +175,38 @@ const HotelPage = () => {
 
   useEffect(() => {
     getHotelData();
+
+    const today = dayjs(new Date());
+    const tomorrow = today.add(1, "day");
+
+    setCheckIn(today);
+    setCheckOut(tomorrow);
   }, []);
+
+  const { addBooking } = useBookings();
+  const navigate = useNavigate();
+
+  const handleBooking = ({
+    roomNumber,
+    roomType,
+    roomPhotoUrl,
+    price,
+    capacityOfAdults,
+    capacityOfChildren,
+  }: Room) => {
+    addBooking({
+      hotelName: hotelDetails.hotelName,
+      roomNumber,
+      roomType,
+      roomPhotoUrl,
+      checkInDate: checkIn?.format("YYYY-MM-DD")!,
+      checkOutDate: checkOut?.format("YYYY-MM-DD")!,
+      adults: capacityOfAdults,
+      children: capacityOfChildren,
+      totalCost: price,
+    });
+    navigate("/checkout");
+  };
 
   return (
     <ResponsiveColoredGrid>
@@ -425,11 +465,106 @@ const HotelPage = () => {
                         room.capacityOfChildren === 1 ? "child" : "children"
                       }`}
                       actionIcon={
-                        <Button variant="outlined" sx={{ mr: 2 }}>
+                        <Button
+                          variant="outlined"
+                          sx={{ mr: 2 }}
+                          onClick={() => setOpenBookingModal(true)}
+                        >
                           Book
                         </Button>
                       }
                     />
+                    <Modal
+                      open={openBookingModal}
+                      onClose={() => setOpenBookingModal(false)}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          maxHeight: 500,
+                          width: 400,
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -60%)",
+                          p: 2,
+                          bgcolor: "lightBackground.main",
+                          boxShadow: 24,
+                          borderRadius: 1,
+                        }}
+                      >
+                        <Typography variant="h5">
+                          Please Select Your Stay Dates
+                        </Typography>
+
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            height: "130px",
+                            m: 3,
+                          }}
+                        >
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DesktopDatePicker
+                              label="Check in"
+                              format="DD-MM-YYYY"
+                              value={checkIn}
+                              minDate={dayjs(new Date())}
+                              onChange={(newValue) => {
+                                Number(newValue!.format("YYYYMMDD")) >
+                                Number(checkOut!.format("YYYYMMDD"))
+                                  ? setCheckOut(newValue!.add(1, "day"))
+                                  : null;
+                                setCheckIn(newValue);
+                              }}
+                              showDaysOutsideCurrentMonth
+                              sx={{ width: "320px" }}
+                            />
+                          </LocalizationProvider>
+
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DesktopDatePicker
+                              label="Check out"
+                              format="DD-MM-YYYY"
+                              value={checkOut}
+                              minDate={checkIn}
+                              onChange={(newValue) => {
+                                setCheckOut(newValue);
+                              }}
+                              showDaysOutsideCurrentMonth
+                              sx={{ width: "320px" }}
+                            />
+                          </LocalizationProvider>
+                        </Box>
+
+                        <Divider />
+
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            p: 2,
+                            borderRadius: 1,
+                          }}
+                        >
+                          <Button onClick={() => setOpenBookingModal(false)}>
+                            cancel
+                          </Button>
+                          <Button
+                            variant="contained"
+                            onClick={() => handleBooking(room)}
+                          >
+                            Confirm
+                          </Button>
+                        </Box>
+                      </Box>
+                    </Modal>
                   </ImageListItem>
                 </Card>
               ))}

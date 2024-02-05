@@ -8,7 +8,7 @@ import { AxiosError } from "axios";
 import { useSnackbarError } from "../../../context/SnackbarErrorProvider";
 import VisitedHotelCard from "./components/VisitedHotelCard";
 import DestinationCard from "./components/TrendingDestinationCard";
-import SectionHeader from "./components/SectionHeader";
+import SectionHeader from "../../../Common/SectionHeader";
 
 const featuredDealsURL = import.meta.env.VITE_GET_FEATURED_DEALS;
 const recentlyVisitedHotelsURL = import.meta.env

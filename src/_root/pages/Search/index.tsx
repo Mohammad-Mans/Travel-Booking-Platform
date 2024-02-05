@@ -245,7 +245,7 @@ const SearchPage = () => {
               top: ["50px", "56px", "64px"],
               borderRadius: 1,
               paddingRight: { xs: 0, md: 1 },
-              pt: 1,
+              pt: [0.5, 1],
               zIndex: 2,
             }}
           >

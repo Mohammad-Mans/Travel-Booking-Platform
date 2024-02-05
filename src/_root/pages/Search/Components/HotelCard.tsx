@@ -9,6 +9,9 @@ import {
   Rating,
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
+import { useBookings } from "../../../../context/BookingsProvider";
+import { useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 type Amenity = {
   id: number;
@@ -37,6 +40,30 @@ const HotelCard: FC<HotelCardProps> = ({
   roomPhotoUrl,
   amenities,
 }) => {
+  const { addBooking } = useBookings();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const handleBooking = () => {
+    const checkInDate = searchParams.get("checkInDate");
+    const checkOutDate = searchParams.get("checkOutDate");
+    const adults = Number(searchParams.get("adults"));
+    const children = Number(searchParams.get("children"));
+
+    addBooking({
+      hotelName,
+      roomNumber: 1,
+      roomType,
+      roomPhotoUrl,
+      checkInDate,
+      checkOutDate,
+      adults,
+      children,
+      totalCost: roomPrice,
+    });
+    navigate("/checkout");
+  };
+
   return (
     <Card
       sx={{
@@ -137,7 +164,7 @@ const HotelCard: FC<HotelCardProps> = ({
               ))}
             </Box>
 
-            <Button variant="contained" fullWidth>
+            <Button variant="contained" fullWidth onClick={handleBooking}>
               Book
             </Button>
           </Box>

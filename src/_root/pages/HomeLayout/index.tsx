@@ -13,6 +13,7 @@ import { Outlet } from "react-router-dom";
 import LuggageIcon from "@mui/icons-material/Luggage";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../../assets/logo/Vista-Voyage-Logo.svg";
+import { BookingsProvider } from "../../../context/BookingsProvider";
 
 function HomeLayout() {
   const navigate = useNavigate();
@@ -78,7 +79,9 @@ function HomeLayout() {
       </AppBar>
 
       <Box component="main" pt={8}>
-        <Outlet />
+        <BookingsProvider>
+          <Outlet />
+        </BookingsProvider>
       </Box>
     </>
   );
