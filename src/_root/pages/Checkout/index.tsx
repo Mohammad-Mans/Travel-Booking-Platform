@@ -92,8 +92,8 @@ const CheckoutPage = () => {
       const confirmationNumber = response.data.confirmationNumber;
 
       if (response.data.bookingStatus === "Confirmed") {
-        clearBooking();
         navigate(`/confirmation/${confirmationNumber}`);
+        clearBooking();
       } else {
         setErrorMessage("Something went wrong. Please try again");
       }
