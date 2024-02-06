@@ -107,7 +107,7 @@ const ConfirmationPage = () => {
 
   return (
     <ResponsiveColoredGrid
-      color="darkBackground.main"
+      color="lightBackground.main"
       minHeight="calc(100vh - 64px)"
     >
       {loadingConfirmationData ? (

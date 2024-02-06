@@ -216,7 +216,10 @@ const HotelPage = () => {
   };
 
   return (
-    <ResponsiveColoredGrid>
+    <ResponsiveColoredGrid
+      color="darkBackground.main"
+      minHeight="calc(100vh - 64px)"
+    >
       {loadingHotelData ? (
         <Box
           display="flex"
