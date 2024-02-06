@@ -149,10 +149,10 @@ const HotelPage = () => {
     setOpenImageModal(false);
   };
 
-  const getHotelDetailsURL = `/api/hotels/${hotelId}?includeRooms=true`;
-  const getPictureGalleryURL = `/api/hotels/${hotelId}/gallery`;
-  const getAvailableRoomsURL = `/api/hotels/${hotelId}/available-rooms?checkInDate=2%2F2%2F2020&CheckOutDate=1%2F1%2F2030`;
-  const getReviewsURL = `/api/hotels/${hotelId}/reviews`;
+  const GET_HOTEL_DETAILS_URL = `/api/hotels/${hotelId}?includeRooms=true`;
+  const GET_PICTURE_GALLERY_URL = `/api/hotels/${hotelId}/gallery`;
+  const GET_AVAILABLE_ROOMS_URL = `/api/hotels/${hotelId}/available-rooms?checkInDate=2%2F2%2F2020&CheckOutDate=1%2F1%2F2030`;
+  const GET_REVIEWS_URL = `/api/hotels/${hotelId}/reviews`;
 
   const getHotelData = async () => {
     try {
@@ -162,10 +162,10 @@ const HotelPage = () => {
         availableRoomsResponse,
         reviewsResponse,
       ] = await Promise.all([
-        axios.get(getHotelDetailsURL),
-        axios.get(getPictureGalleryURL),
-        axios.get(getAvailableRoomsURL),
-        axios.get(getReviewsURL),
+        axios.get(GET_HOTEL_DETAILS_URL),
+        axios.get(GET_PICTURE_GALLERY_URL),
+        axios.get(GET_AVAILABLE_ROOMS_URL),
+        axios.get(GET_REVIEWS_URL),
       ]);
 
       setHotelDetails(hotelDetailsResponse.data);

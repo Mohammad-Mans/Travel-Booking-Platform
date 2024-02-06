@@ -52,7 +52,7 @@ type SubmitProps = {
   specialRequists: string;
 };
 
-const BookingsURL = "/api/bookings";
+const POST_BOOKINGS_URL = "/api/bookings";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -85,7 +85,7 @@ const CheckoutPage = () => {
         Authorization: `Bearer ${accessToken}`,
       };
 
-      const response = await axios.post(BookingsURL, data, {
+      const response = await axios.post(POST_BOOKINGS_URL, data, {
         headers,
       });
 

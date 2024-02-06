@@ -28,9 +28,8 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { AxiosError } from "axios";
 import { useSnackbarError } from "../../../context/SnackbarErrorProvider";
 
-const homeSearchURL = import.meta.env.VITE_HOME_SEARCH_URL;
-const getSearchResultsAmenities = import.meta.env
-  .VITE_GET_SEARCH_RESULTS_AMENITIES;
+const GET_HOME_SEARCH_URL = "/api/home/search";
+const GET_SEARCH_RESULTS_AMENITIES_URL = "/api/search-results/amenities";
 
 type SearchResult = {
   hotelId: number;
@@ -80,7 +79,7 @@ const SearchPage = () => {
   useEffect(() => {
     (async () => {
       try {
-        const response = await axios.get(homeSearchURL, {
+        const response = await axios.get(GET_HOME_SEARCH_URL, {
           params: searchParams,
         });
 
@@ -129,7 +128,7 @@ const SearchPage = () => {
   useEffect(() => {
     (async () => {
       try {
-        const response = await axios.get(getSearchResultsAmenities);
+        const response = await axios.get(GET_SEARCH_RESULTS_AMENITIES_URL);
         const amenitiesData = response.data;
         const amenitiesNames = amenitiesData.map(
           (amenity: Amenity) => amenity.name

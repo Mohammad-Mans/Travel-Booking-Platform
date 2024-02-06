@@ -12,10 +12,8 @@ import SectionHeader from "../../../Common/SectionHeader";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 
-const featuredDealsURL = import.meta.env.VITE_GET_FEATURED_DEALS;
-const recentlyVisitedHotelsURL = import.meta.env
-  .VITE_GET_RECENTLY_VISITED_HOTELS;
-const trendingDestinationURL = import.meta.env.VITE_GET_TRENDING_DESTINATION;
+const GET_FEATURED_DEALS_URL = "/api/home/featured-deals";
+const GET_TRENDING_DESTINATION_URL = "/api/home/destinations/trending";
 
 type FeaturedDeals = {
   hotelId: number;
@@ -64,7 +62,7 @@ const HomePage = () => {
 
   const getFeaturedDeals = async () => {
     try {
-      const response = await axios.get(featuredDealsURL);
+      const response = await axios.get(GET_FEATURED_DEALS_URL);
       setFeaturedDeals(response?.data);
     } catch (err) {
       const axiosError = err as AxiosError;
@@ -83,16 +81,14 @@ const HomePage = () => {
     const userData = JSON.parse(localStorage.getItem("user_data")!);
     const accessToken = userData.accessToken;
     const userId = userData.userId;
+    const GET_RECENTLY_VISITED_HOTELS_URL = `/api/home/users/${userId}/recent-hotels`;
 
     try {
-      const response = await axios.get(
-        recentlyVisitedHotelsURL + userId + "/recent-hotels",
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+      const response = await axios.get(GET_RECENTLY_VISITED_HOTELS_URL, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
       setRecentlyVisitedHotels(response?.data);
     } catch (err) {
@@ -110,7 +106,7 @@ const HomePage = () => {
 
   const getTrendingDestination = async () => {
     try {
-      const response = await axios.get(trendingDestinationURL);
+      const response = await axios.get(GET_TRENDING_DESTINATION_URL);
       setTrendingDestination(response?.data);
     } catch (err) {
       const axiosError = err as AxiosError;

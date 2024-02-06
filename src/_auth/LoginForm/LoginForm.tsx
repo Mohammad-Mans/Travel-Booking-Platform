@@ -14,7 +14,7 @@ import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSnackbarError } from "../../context/SnackbarErrorProvider";
 
-const LOGIN_URL = import.meta.env.VITE_LOGIN_URL;
+const LOGIN_URL = "/api/auth/authenticate";
 
 const INITIAL_FORM_STATE = {
   userName: "",

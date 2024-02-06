@@ -25,6 +25,8 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import { useNavigate } from "react-router-dom";
 import { useSnackbarError } from "../../../../context/SnackbarErrorProvider";
 
+const GET_CITIES_URL = "/api/cities";
+
 type City = {
   name: string;
 };
@@ -55,7 +57,6 @@ const SearchComponent: React.FC<SearchComponentProps> = (props) => {
   >([]);
   const loading = openAutocomplete && autocompleteOptions.length === 0;
 
-  const getCitesURL = import.meta.env.VITE_GET_CITIES;
 
   useEffect(() => {
     let active = true;
@@ -66,7 +67,7 @@ const SearchComponent: React.FC<SearchComponentProps> = (props) => {
 
     (async () => {
       try {
-        const response = await axios.get(getCitesURL);
+        const response = await axios.get(GET_CITIES_URL);
 
         const cityNames = response.data.map((city: City) => city.name);
 
@@ -87,7 +88,7 @@ const SearchComponent: React.FC<SearchComponentProps> = (props) => {
     return () => {
       active = false;
     };
-  }, [getCitesURL, loading]);
+  }, [GET_CITIES_URL, loading]);
 
   useEffect(() => {
     if (!openAutocomplete) {

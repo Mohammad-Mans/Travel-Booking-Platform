@@ -41,7 +41,7 @@ const ConfirmationPage = () => {
 
   const [confirmationData, setConfirmationData] = useState<ConfirmationData>();
 
-  const getBookingURL = "/api/bookings/" + confirmationNumber?.split("-")[1];
+  const GET_BOOKING_URL = "/api/bookings/" + confirmationNumber?.split("-")[1];
 
   const getHotelData = async () => {
     try {
@@ -53,7 +53,7 @@ const ConfirmationPage = () => {
         Authorization: `Bearer ${accessToken}`,
       };
 
-      const response = await axios.get(getBookingURL, { headers });
+      const response = await axios.get(GET_BOOKING_URL, { headers });
 
       const formattedDate = new Date(
         response.data.bookingDateTime
