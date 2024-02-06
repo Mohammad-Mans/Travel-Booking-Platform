@@ -32,7 +32,25 @@ export const BookingsProvider: FC<BookingsProviderProps> = ({ children }) => {
   const [bookedRoom, setBookedRoom] = useState<Room | null>(null);
 
   const addBooking = (room: Room) => {
-    setBookedRoom(room);
+    const checkInDate = new Date(room.checkInDate!);
+    const checkOutDate = new Date(room.checkOutDate!);
+
+    const formattedCheckInDate = checkInDate.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    const formattedCheckOutDate = checkOutDate.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    setBookedRoom({
+      ...room,
+      checkInDate: formattedCheckInDate,
+      checkOutDate: formattedCheckOutDate,
+    });
   };
 
   const clearBooking = () => {
@@ -47,7 +65,7 @@ export const BookingsProvider: FC<BookingsProviderProps> = ({ children }) => {
 };
 
 export const useBookings = () => {
-  const { addBooking , clearBooking , bookedRoom } = useContext(BookingsContext);
+  const { addBooking, clearBooking, bookedRoom } = useContext(BookingsContext);
 
   if (!addBooking || !clearBooking) {
     throw new Error("useBookings must be used within a BookingsProvider");
