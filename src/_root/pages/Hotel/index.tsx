@@ -100,6 +100,18 @@ type Room = {
   availability: boolean;
 };
 
+const initialRoomData = {
+  roomId: 0,
+  roomNumber: 0,
+  roomPhotoUrl: "",
+  roomType: "",
+  capacityOfAdults: 0,
+  capacityOfChildren: 0,
+  roomAmenities: [],
+  price: 0,
+  availability: false,
+};
+
 type Amenity = {
   name: string;
   description: string;
@@ -186,24 +198,19 @@ const HotelPage = () => {
   const { addBooking } = useBookings();
   const navigate = useNavigate();
 
-  const handleBooking = ({
-    roomNumber,
-    roomType,
-    roomPhotoUrl,
-    price,
-    capacityOfAdults,
-    capacityOfChildren,
-  }: Room) => {
+  const [selectedRoom, setSelectedRoom] = useState<Room>(initialRoomData);
+
+  const handleBooking = () => {
     addBooking({
       hotelName: hotelDetails.hotelName,
-      roomNumber,
-      roomType,
-      roomPhotoUrl,
-      checkInDate: checkIn?.format("YYYY-MM-DD")!,
-      checkOutDate: checkOut?.format("YYYY-MM-DD")!,
-      adults: capacityOfAdults,
-      children: capacityOfChildren,
-      totalCost: price,
+      roomNumber: selectedRoom.roomNumber,
+      roomType: selectedRoom.roomType,
+      roomPhotoUrl: selectedRoom.roomPhotoUrl,
+      checkInDate: checkIn!.format("YYYY-MM-DD"),
+      checkOutDate: checkOut!.format("YYYY-MM-DD"),
+      adults: selectedRoom.capacityOfAdults,
+      children: selectedRoom.capacityOfChildren,
+      totalCost: selectedRoom.price,
     });
     navigate("/checkout");
   };
@@ -468,106 +475,106 @@ const HotelPage = () => {
                         <Button
                           variant="outlined"
                           sx={{ mr: 2 }}
-                          onClick={() => setOpenBookingModal(true)}
+                          onClick={() => {
+                            setSelectedRoom(room);
+                            setOpenBookingModal(true);
+                          }}
                         >
                           Book
                         </Button>
                       }
                     />
-                    <Modal
-                      open={openBookingModal}
-                      onClose={() => setOpenBookingModal(false)}
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "space-between",
-                          maxHeight: 500,
-                          width: 400,
-                          position: "absolute",
-                          top: "50%",
-                          left: "50%",
-                          transform: "translate(-50%, -60%)",
-                          p: 2,
-                          bgcolor: "lightBackground.main",
-                          boxShadow: 24,
-                          borderRadius: 1,
-                        }}
-                      >
-                        <Typography variant="h5">
-                          Please Select Your Stay Dates
-                        </Typography>
-
-                        <Box
-                          sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            height: "130px",
-                            m: 3,
-                          }}
-                        >
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DesktopDatePicker
-                              label="Check in"
-                              format="DD-MM-YYYY"
-                              value={checkIn}
-                              minDate={dayjs(new Date())}
-                              onChange={(newValue) => {
-                                Number(newValue!.format("YYYYMMDD")) >
-                                Number(checkOut!.format("YYYYMMDD"))
-                                  ? setCheckOut(newValue!.add(1, "day"))
-                                  : null;
-                                setCheckIn(newValue);
-                              }}
-                              showDaysOutsideCurrentMonth
-                              sx={{ width: "320px" }}
-                            />
-                          </LocalizationProvider>
-
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DesktopDatePicker
-                              label="Check out"
-                              format="DD-MM-YYYY"
-                              value={checkOut}
-                              minDate={checkIn}
-                              onChange={(newValue) => {
-                                setCheckOut(newValue);
-                              }}
-                              showDaysOutsideCurrentMonth
-                              sx={{ width: "320px" }}
-                            />
-                          </LocalizationProvider>
-                        </Box>
-
-                        <Divider />
-
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            p: 2,
-                            borderRadius: 1,
-                          }}
-                        >
-                          <Button onClick={() => setOpenBookingModal(false)}>
-                            cancel
-                          </Button>
-                          <Button
-                            variant="contained"
-                            onClick={() => handleBooking(room)}
-                          >
-                            Confirm
-                          </Button>
-                        </Box>
-                      </Box>
-                    </Modal>
                   </ImageListItem>
                 </Card>
               ))}
+              <Modal
+                open={openBookingModal}
+                onClose={() => setOpenBookingModal(false)}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    maxHeight: 500,
+                    width: 400,
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -60%)",
+                    p: 2,
+                    bgcolor: "lightBackground.main",
+                    boxShadow: 24,
+                    borderRadius: 1,
+                  }}
+                >
+                  <Typography variant="h5">
+                    Please Select Your Stay Dates
+                  </Typography>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      height: "130px",
+                      m: 3,
+                    }}
+                  >
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DesktopDatePicker
+                        label="Check in"
+                        format="DD-MM-YYYY"
+                        value={checkIn}
+                        minDate={dayjs(new Date())}
+                        onChange={(newValue) => {
+                          Number(newValue!.format("YYYYMMDD")) >
+                          Number(checkOut!.format("YYYYMMDD"))
+                            ? setCheckOut(newValue!.add(1, "day"))
+                            : null;
+                          setCheckIn(newValue);
+                        }}
+                        showDaysOutsideCurrentMonth
+                        sx={{ width: "320px" }}
+                      />
+                    </LocalizationProvider>
+
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DesktopDatePicker
+                        label="Check out"
+                        format="DD-MM-YYYY"
+                        value={checkOut}
+                        minDate={checkIn}
+                        onChange={(newValue) => {
+                          setCheckOut(newValue);
+                        }}
+                        showDaysOutsideCurrentMonth
+                        sx={{ width: "320px" }}
+                      />
+                    </LocalizationProvider>
+                  </Box>
+
+                  <Divider />
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      p: 2,
+                      borderRadius: 1,
+                    }}
+                  >
+                    <Button onClick={() => setOpenBookingModal(false)}>
+                      cancel
+                    </Button>
+                    <Button variant="contained" onClick={() => handleBooking()}>
+                      Confirm
+                    </Button>
+                  </Box>
+                </Box>
+              </Modal>
             </ImageList>
           </Grid>
         </Grid>

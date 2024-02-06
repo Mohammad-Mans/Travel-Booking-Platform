@@ -9,6 +9,8 @@ import { useSnackbarError } from "../../../context/SnackbarErrorProvider";
 import VisitedHotelCard from "./components/VisitedHotelCard";
 import DestinationCard from "./components/TrendingDestinationCard";
 import SectionHeader from "../../../Common/SectionHeader";
+import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 const featuredDealsURL = import.meta.env.VITE_GET_FEATURED_DEALS;
 const recentlyVisitedHotelsURL = import.meta.env
@@ -47,6 +49,7 @@ type TrendingDestination = {
 
 const HomePage = () => {
   const { setErrorMessage } = useSnackbarError();
+  const navigate = useNavigate();
   const [featuredDeals, setFeaturedDeals] = useState<FeaturedDeals[]>();
   const [recentlyVisitedHotels, setRecentlyVisitedHotels] =
     useState<recentlyVisitedHotels[]>();
@@ -128,6 +131,21 @@ const HomePage = () => {
     getTrendingDestination();
   }, []);
 
+  const viewHotel = (hotleID: number) => {
+    navigate(`/hotel/${hotleID}`);
+  };
+
+  const viewCity = (cityName: string) => {
+    const today = dayjs(new Date());
+    const tomorrow = today.add(1, "day");
+    const checkInDate = today.format("YYYY-MM-DD");
+    const checkOutDate = tomorrow.format("YYYY-MM-DD");
+
+    const searchQuery = `city=${cityName}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&adults=${2}&children=${0}&numberOfRooms=${1}`;
+
+    navigate(`/search?${searchQuery}`);
+  };
+
   return (
     <>
       <ResponsiveColoredGrid color="darkBackground.main">
@@ -170,7 +188,13 @@ const HomePage = () => {
             >
               {featuredDeals?.map((deal) => {
                 return (
-                  <Grid item key={deal.hotelId}>
+                  <Grid
+                    item
+                    key={deal.hotelId}
+                    onClick={() => {
+                      viewHotel(deal.hotelId);
+                    }}
+                  >
                     <FeaturedDealsCard {...deal} />
                   </Grid>
                 );
@@ -189,7 +213,13 @@ const HomePage = () => {
             >
               {recentlyVisitedHotels?.slice(0, 3).map((hotel) => {
                 return (
-                  <Grid item key={hotel.hotelId}>
+                  <Grid
+                    item
+                    key={hotel.hotelId}
+                    onClick={() => {
+                      viewHotel(hotel.hotelId);
+                    }}
+                  >
                     <VisitedHotelCard {...hotel} />
                   </Grid>
                 );
@@ -208,7 +238,13 @@ const HomePage = () => {
             >
               {trendingDestination?.map((destination) => {
                 return (
-                  <Grid item key={destination.cityId}>
+                  <Grid
+                    item
+                    key={destination.cityId}
+                    onClick={() => {
+                      viewCity(destination.cityName);
+                    }}
+                  >
                     <DestinationCard {...destination} />
                   </Grid>
                 );

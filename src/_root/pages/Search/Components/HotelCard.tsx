@@ -44,6 +44,10 @@ const HotelCard: FC<HotelCardProps> = ({
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  const viewHotel = (hotleID: number) => {
+    navigate(`/hotel/${hotleID}`);
+  };
+
   const handleBooking = () => {
     const checkInDate = searchParams.get("checkInDate");
     const checkOutDate = searchParams.get("checkOutDate");
@@ -127,7 +131,14 @@ const HotelCard: FC<HotelCardProps> = ({
               </Typography>
             </Box>
 
-            <Button variant="outlined">View Hotel</Button>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                viewHotel(hotelId);
+              }}
+            >
+              View Hotel
+            </Button>
           </Box>
 
           <Box
