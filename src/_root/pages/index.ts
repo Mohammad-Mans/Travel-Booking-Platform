@@ -5,3 +5,6 @@ export { default as HotelPage } from "./Hotel/index";
 export { default as CheckoutPage } from "./Checkout/index";
 export { default as ConfirmationPage } from "./Confirmation/index";
 export { default as AdminPage } from "./Admin/index";
+export { default as CitiesPage } from "./Admin/pages/cities";
+export { default as HotelsPage } from "./Admin/pages/hotels";
+export { default as RoomsPage } from "./Admin/pages/rooms";

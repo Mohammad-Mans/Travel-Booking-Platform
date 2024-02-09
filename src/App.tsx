@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import AuthLayout from "./_auth/AuthLayout";
 import LoginForm from "./_auth/LoginForm/LoginForm";
 import MissingPage from "./_auth/Missing/MissingPage";
@@ -12,6 +12,9 @@ import {
   CheckoutPage,
   ConfirmationPage,
   HotelPage,
+  CitiesPage,
+  HotelsPage,
+  RoomsPage,
 } from "./_root/pages";
 import "./App.css";
 
@@ -42,7 +45,11 @@ function App() {
       </Route>
 
       <Route element={<RootLayout allowedRole="Admin" />}>
-        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin" element={<AdminPage />}>
+          <Route index element={<CitiesPage />} />
+          <Route path="hotels" element={<HotelsPage />} />
+          <Route path="rooms" element={<RoomsPage />} />
+        </Route>
       </Route>
 
       <Route path="*" element={<MissingPage />} />
