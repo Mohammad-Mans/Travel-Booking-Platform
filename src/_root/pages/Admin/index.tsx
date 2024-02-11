@@ -24,6 +24,7 @@ import { Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../../assets/logo/Vista-Voyage-Logo.svg";
 import { useLocation } from "react-router-dom";
+import { SnackbarSuccessProvider } from "../../../context/SnackbarSuccessProvider";
 
 const drawerWidth = 300;
 
@@ -139,9 +140,9 @@ export default function ResponsiveDrawer() {
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          width: { md: `calc(100% - ${drawerWidth}px)` },
 
-          ml: { sm: `${drawerWidth}px` },
+          ml: { md: `${drawerWidth}px` },
         }}
       >
         <Toolbar>
@@ -149,7 +150,7 @@ export default function ResponsiveDrawer() {
             color="inherit"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
+            sx={{ mr: 2, display: { md: "none" } }}
           >
             <MenuIcon />
           </IconButton>
@@ -166,12 +167,12 @@ export default function ResponsiveDrawer() {
 
       <Box
         component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
       >
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: "none", sm: "block" },
+            display: { xs: "none", md: "block" },
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: drawerWidth,
@@ -191,7 +192,7 @@ export default function ResponsiveDrawer() {
             keepMounted: true,
           }}
           sx={{
-            display: { xs: "block", sm: "none" },
+            display: { xs: "block", md: "none" },
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: drawerWidth,
@@ -205,12 +206,16 @@ export default function ResponsiveDrawer() {
       <Box
         component="main"
         sx={{
-          pt: 8,
           flex: 1,
+          minHeight: "100vh",
+          pt: 8,
+          bgcolor: "darkBackground.main",
         }}
       >
         <ResponsiveColoredGrid>
-          <Outlet />
+          <SnackbarSuccessProvider>
+            <Outlet />
+          </SnackbarSuccessProvider>
         </ResponsiveColoredGrid>
       </Box>
     </Box>

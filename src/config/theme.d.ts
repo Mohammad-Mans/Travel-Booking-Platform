@@ -2,6 +2,7 @@
 import { Palette, PaletteOptions } from "@mui/material/styles";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TextFieldPropsColorOverrides } from "@mui/material/TextField";
+import { ButtonPropsColorOverrides } from "@mui/material";
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -22,5 +23,11 @@ declare module "@mui/material/styles" {
 declare module "@mui/material/TextField" {
   interface TextFieldPropsColorOverrides {
     white: true;
+  }
+}
+
+declare module "@mui/material" {
+  interface ButtonPropsColorOverrides {
+    black: true;
   }
 }
