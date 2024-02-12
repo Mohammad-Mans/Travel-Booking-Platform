@@ -20,7 +20,7 @@ import TablePagination from "@mui/material/TablePagination";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 type Column = {
-  field: keyof City;
+  field: keyof Hotel | keyof City | keyof Room;
   headerName: string;
 };
 
@@ -30,16 +30,34 @@ type City = {
   description: string;
 };
 
+type Hotel = {
+  id: number;
+  name: string;
+  description: string;
+  hotelType: number;
+  starRating: number;
+  latitude: number;
+  longitude: number;
+};
+
+type Room = {
+  id: number;
+  roomNumber: string;
+  cost: string;
+};
+
 type ResultsGridProps = {
-  data: City[];
+  dataType: string;
+  data: (City | Hotel | Room)[];
   columnHeaders: Column[];
-  onUpdate: (updatedEntity: any) => void;
-  onDelete: (entity: any) => void;
+  onUpdate: (selectedRow: any) => void;
+  onDelete: (selectedRowID: number | null) => void;
   onChangePage: (pageNumber: number, pageSize: number) => void;
   totalCount: number;
 };
 
 const ResultsGrid: FC<ResultsGridProps> = ({
+  dataType,
   data,
   columnHeaders,
   onUpdate,
@@ -47,25 +65,13 @@ const ResultsGrid: FC<ResultsGridProps> = ({
   totalCount,
   onChangePage,
 }) => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-  const [selectedEntity, setSelectedEntity] = useState<any>(null);
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
   const [rowToDelete, setRowToDelete] = useState<number | null>(0);
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
-  const handleRowClick = (entity: any) => {
-    setSelectedEntity(entity);
-    setIsDrawerOpen(true);
-  };
-
-  const closeDrawer = () => {
-    setIsDrawerOpen(false);
-  };
-
-  const handleUpdate = (updatedEntity: any) => {
-    onUpdate(updatedEntity);
-    closeDrawer();
+  const handleRowClick = (row: any) => {
+    onUpdate(row);
   };
 
   const handleDelete = (id: number, event: React.MouseEvent) => {
@@ -103,54 +109,62 @@ const ResultsGrid: FC<ResultsGridProps> = ({
               </TableRow>
             </TableHead>
 
-            <TableBody>
-              {data.length > 0 ? (
-                data.map((row, index) => (
-                  <TableRow
-                    key={index}
-                    hover
-                    onClick={() => handleRowClick(row)}
-                  >
-                    {columnHeaders.map((column) => (
-                      <TableCell key={`${row.id}-${column.field}`}>
-                        {row[column.field]}
-                      </TableCell>
-                    ))}
+            {data.length > 0 ? (
+              <>
+                <TableBody>
+                  {data.map((row, index) => (
+                    <TableRow
+                      key={index}
+                      hover
+                      onClick={() => handleRowClick(row)}
+                    >
+                      {columnHeaders.map((column) => (
+                        <TableCell key={`${row.id}-${column.field}`}>
+                          {dataType === "cities" &&
+                            (row as City)[column.field as keyof City]}
+                          {dataType === "hotels" &&
+                            (row as Hotel)[column.field as keyof Hotel]}
+                          {dataType === "rooms" &&
+                            (row as Room)[column.field as keyof Room]}
+                        </TableCell>
+                      ))}
 
-                    <TableCell>
-                      <IconButton
-                        color="error"
-                        onClick={(e) => handleDelete(row.id, e)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
+                      <TableCell>
+                        <IconButton
+                          color="error"
+                          onClick={(e) => handleDelete(row.id, e)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+
+                <TableFooter>
+                  <TableRow>
+                    <TableCell colSpan={columnHeaders.length + 1}>
+                      <TablePagination
+                        component="div"
+                        count={totalCount}
+                        page={pageNumber}
+                        onPageChange={handleChangePageNumber}
+                        rowsPerPage={pageSize}
+                        onRowsPerPageChange={handleChangePageSize}
+                        rowsPerPageOptions={[5, 10, 15, 20]}
+                      />
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
+                </TableFooter>
+              </>
+            ) : (
+              <TableBody>
                 <TableRow>
                   <TableCell align="center" colSpan={columnHeaders.length + 1}>
                     No data were found
                   </TableCell>
                 </TableRow>
-              )}
-            </TableBody>
-            {data.length > 0 && (
-              <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={columnHeaders.length + 1}>
-                    <TablePagination
-                      component="div"
-                      count={totalCount}
-                      page={pageNumber}
-                      onPageChange={handleChangePageNumber}
-                      rowsPerPage={pageSize}
-                      onRowsPerPageChange={handleChangePageSize}
-                      rowsPerPageOptions={[4, 6, 8, 10]}
-                    />
-                  </TableCell>
-                </TableRow>
-              </TableFooter>
+              </TableBody>
             )}
           </Table>
         </TableContainer>

@@ -35,3 +35,34 @@ export const CheckoutValidation = Yup.object().shape({
     }
   ),
 });
+
+export const CityFormValidation = Yup.object().shape({
+  name: Yup.string().required("City Name is required"),
+  description: Yup.string().required("City Description is required"),
+});
+
+const HotelBaseSchema = Yup.object().shape({
+  name: Yup.string().required("Hotel Name is required"),
+  description: Yup.string().required("Hotel Description is required"),
+  hotelType: Yup.string().required("Hotel Type is required"),
+  starRating: Yup.string().required("Star Rating is required"),
+  latitude: Yup.string().required("Latitude is required"),
+  longitude: Yup.string().required("Longitude is required"),
+});
+
+export const HotelUpdateFormValidation = HotelBaseSchema;
+
+export const HotelCreationFormValidation = HotelBaseSchema.shape({
+  cityId: Yup.string().required("City Name is required"),
+});
+
+const RoomBaseSchema = Yup.object().shape({
+  roomNumber: Yup.string().required("Room Number is required"),
+  cost: Yup.string().required("Cost is required"),
+});
+
+export const RoomUpdateFormValidation = RoomBaseSchema;
+
+export const RoomCreationFormValidation = RoomBaseSchema.shape({
+  hotelId: Yup.string().required("Hotel Name is required"),
+});
