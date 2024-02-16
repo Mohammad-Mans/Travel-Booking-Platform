@@ -18,8 +18,8 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-function TransitionRight(props: SlideProps) {
-  return <Slide {...props} direction="right" />;
+function TransitionDown(props: SlideProps) {
+  return <Slide {...props} direction="down" />;
 }
 
 const SnackbarErrorContext = createContext<SnackbarContextValues>({
@@ -45,8 +45,9 @@ export const SnackbarErrorProvider: FC<SnackBarProviderProps> = ({
 
   const configSnackbar: SnackbarProps = {
     open: isOpen,
+    anchorOrigin: { vertical: "top", horizontal: "center" },
     onClose: closeSnackbar,
-    TransitionComponent: TransitionRight,
+    TransitionComponent: TransitionDown,
     transitionDuration: 500,
     autoHideDuration: 3000,
   };

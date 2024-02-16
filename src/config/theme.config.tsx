@@ -1,4 +1,4 @@
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider, createTheme, makeStyles } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import type {} from "@mui/lab/themeAugmentation";
 
@@ -7,10 +7,10 @@ type ThemeProp = {
 };
 
 enum themePalette {
-  MintGreen = "#66CDAA",
+  TyrianPurple = "#44021F",
   White = "#FFF",
   Black = "#000",
-  Gray = "#808080",
+  BattleshipGray = "#827F74",
   LightGray = "#F8F8F8",
   OffWhite = "#FDFDFD",
 }
@@ -18,11 +18,11 @@ enum themePalette {
 const theme = createTheme({
   palette: {
     primary: {
-      main: themePalette.MintGreen,
+      main: themePalette.TyrianPurple,
       contrastText: themePalette.White,
     },
     secondary: {
-      main: themePalette.Gray,
+      main: themePalette.BattleshipGray,
     },
     white: {
       main: themePalette.White,

@@ -75,17 +75,28 @@ const LoginForm = (): JSX.Element => {
   return (
     <Box
       sx={{
-        my: 8,
+        mt: 6,
         mx: 4,
+        px: 2,
+        pt: 2,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        borderRadius: 1,
+        background: "rgba(255,255,255,0.6)0%",
+        width: "100%",
+        maxWidth: "430px",
       }}
     >
-      <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-        <PersonIcon />
+      <Avatar sx={{ p: 4, bgcolor: "primary.main" }}>
+        <PersonIcon sx={{ fontSize: "2.5rem" }} />
       </Avatar>
-      <Typography component="h1" variant="h5">
+      <Typography
+        component="h1"
+        variant="h5"
+        color="primary.main"
+        sx={{ my: 1 }}
+      >
         Welcome Back!
       </Typography>
 
@@ -94,12 +105,20 @@ const LoginForm = (): JSX.Element => {
         validationSchema={LoginValidation}
         onSubmit={handleSubmit}
       >
-        <Form>
-          <Box sx={{ mt: 1 }}>
+        <Form style={{ width: "100%" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
             <FormikTextField
               name="userName"
               label="User Name"
               color="white"
+              variant="standard"
               autoFocus
             />
 
@@ -107,6 +126,7 @@ const LoginForm = (): JSX.Element => {
               name="password"
               label="Password"
               color="white"
+              variant="standard"
               type={showPassword ? "text" : "password"}
               InputProps={{
                 endAdornment: (
@@ -118,6 +138,10 @@ const LoginForm = (): JSX.Element => {
                         e.preventDefault();
                       }}
                       edge="end"
+                      sx={{
+                        mb: 1,
+                        mr: 0.1,
+                      }}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>

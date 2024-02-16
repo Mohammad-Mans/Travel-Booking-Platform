@@ -277,7 +277,11 @@ const HotelPage = () => {
                         <CustomerReview key={review.reviewId} {...review} />
                       );
                     })}
-                    <Button fullWidth onClick={() => setOpenReviewsModal(true)}>
+                    <Button
+                      fullWidth
+                      variant="outlined"
+                      onClick={() => setOpenReviewsModal(true)}
+                    >
                       View all Reviews
                     </Button>
                     <Modal
@@ -476,7 +480,8 @@ const HotelPage = () => {
                       }`}
                       actionIcon={
                         <Button
-                          variant="outlined"
+                          variant="contained"
+                          color={"secondary"}
                           sx={{ mr: 2 }}
                           onClick={() => {
                             setSelectedRoom(room);

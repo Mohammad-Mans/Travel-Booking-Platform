@@ -8,21 +8,26 @@ const AuthLayout = () => {
       container
       component="main"
       className="auth"
-      sx={{
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
+      justifyContent="center"
+      height="100vh"
     >
-      <Grid item xs={12} sm={8} md={5}>
+      <Grid
+        item
+        xs={10}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "space-around",
+        }}
+      >
         <Outlet />
 
         <Typography
           variant="body2"
-          color="text.secondary"
+          color="white.main"
           align="center"
-          sx={{ mt: 5 }}
+          sx={{ m: 2 }}
         >
           {`Copyright © Vista Voyage ${new Date().getFullYear()}.`}
         </Typography>

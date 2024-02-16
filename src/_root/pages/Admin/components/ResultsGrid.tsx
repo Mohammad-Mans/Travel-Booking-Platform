@@ -17,7 +17,7 @@ import {
   TableFooter,
 } from "@mui/material";
 import TablePagination from "@mui/material/TablePagination";
-import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteIcon from "@mui/icons-material/DeleteOutline";
 
 type Column = {
   field: keyof Hotel | keyof City | keyof Room;
