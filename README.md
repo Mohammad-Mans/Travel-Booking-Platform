@@ -150,6 +150,8 @@ Upon opening the project, you will land on the login page. There are two login o
 - [Getting Started with Google Maps API in React.js](https://medium.com/@yukthihettiarachchissck/getting-started-with-google-maps-api-in-react-js-1390b19d18f0)
 - [React to Pdf Printing](https://www.youtube.com/watch?v=Do7T8LDKy0Q&list=LL&index=2)
 - [An effective ‘Cancel’ dialog confirmation on Web](https://medium.com/@joaopegb/ux-writing-an-effective-cancel-dialog-confirmation-on-web-539b73a39929)
+- [Checkboxes vs. Switches](https://uxplanet.org/checkbox-vs-toggle-switch-7fc6e83f10b8)
+- [Checkboxes vs. Radio Buttons](https://www.nngroup.com/articles/checkboxes-vs-radio-buttons/)
 
 ## :stars: Acknowledgment
 Special thanks to [**Foothill Technology Solutions**](https://www.foothillsolutions.com/) for the opportunity to work on this project during my internship. The experience and knowledge gained have been invaluable.
