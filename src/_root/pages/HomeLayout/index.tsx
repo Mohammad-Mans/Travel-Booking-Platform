@@ -12,7 +12,7 @@ import {
 import { Outlet } from "react-router-dom";
 import LuggageIcon from "@mui/icons-material/Luggage";
 import { useNavigate } from "react-router-dom";
-import Logo from "../../../assets/logo/Vista-Voyage-Logo.svg";
+import Logo from "../../../assets/logo/Vista-Voyage-Logo-White.svg"
 import { BookingsProvider } from "../../../context/BookingsProvider";
 
 function HomeLayout() {
@@ -33,7 +33,7 @@ function HomeLayout() {
           <Grid item xs={11} lg={9}>
             <Toolbar>
               <IconButton onClick={() => navigate("/")}>
-                <img src={Logo} height={30} alt="Logo" />
+                <img src={Logo} height={45} width={45} alt="Logo" />
               </IconButton>
 
               <Typography

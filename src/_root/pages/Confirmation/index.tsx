@@ -18,7 +18,7 @@ import { AxiosError } from "axios";
 import ConfirmationDetail from "./components/confirmationDetail";
 import PrintIcon from "@mui/icons-material/Print";
 import DownloadIcon from "@mui/icons-material/Download";
-import Logo from "../../../assets/logo/Vista-Voyage-Logo.png";
+import Logo from "../../../assets/logo/Vista-Voyage-Logo-DARK-MAGENTA.png";
 import { useReactToPrint } from "react-to-print";
 
 type ConfirmationData = {
@@ -143,11 +143,11 @@ const ConfirmationPage = () => {
                     sx={{
                       bgcolor: "transparent",
                       border: 1,
-                      borderColor: "secondary.main",
+                      borderColor: "primary.main",
                       mb: 2,
                     }}
                   >
-                    <img src={Logo} height={30} alt="Logo" />
+                    <img src={Logo} height={20} alt="Logo" />
                   </Avatar>
 
                   <Grid container spacing={2}>

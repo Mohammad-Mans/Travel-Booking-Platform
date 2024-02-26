@@ -22,7 +22,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ResponsiveColoredGrid from "../../../Common/ResponsiveColoredGrid";
 import { Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import Logo from "../../../assets/logo/Vista-Voyage-Logo.svg";
+import Logo from "../../../assets/logo/Vista-Voyage-Logo-White.svg"
 import { useLocation } from "react-router-dom";
 import { SnackbarSuccessProvider } from "../../../context/SnackbarSuccessProvider";
 
@@ -156,7 +156,7 @@ export default function ResponsiveDrawer() {
           </IconButton>
 
           <IconButton onClick={() => navigate("")}>
-            <img src={Logo} height={30} alt="Logo" />
+            <img src={Logo} height={45} width={45} alt="Logo" />
           </IconButton>
 
           <Typography variant="h6" component="div" sx={{ ml: 1 }}>
