@@ -164,8 +164,10 @@ const HomePage = () => {
           alignItems="center"
           pb={4}
         >
-          <Typography variant="h3">Greetings, Travel Enthusiasts!</Typography>
-          <Typography variant="h5">
+          <Typography sx={{ typography: { xs: "h5", sm: "h4", md: "h3" } }}>
+            Greetings, Travel Enthusiasts!
+          </Typography>
+          <Typography sx={{ typography: { xs: "body1", sm: "h6", md: "h5" } }}>
             Start Your Next Adventure with Vista Voyage!
           </Typography>
         </Box>
