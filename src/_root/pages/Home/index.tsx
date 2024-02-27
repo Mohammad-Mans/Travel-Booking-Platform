@@ -1,4 +1,11 @@
-import { Box, CircularProgress, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Divider,
+  Grid,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import SearchBar from "./components/SearchBar";
 import ResponsiveColoredGrid from "../../../Common/ResponsiveColoredGrid";
 import FeaturedDealsCard from "./components/FeaturedDealsCard";
@@ -11,6 +18,11 @@ import DestinationCard from "./components/TrendingDestinationCard";
 import SectionHeader from "../../../Common/SectionHeader";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
+import Logo from "../../../assets/logo/Vista-Voyage-Logo-White.svg";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 
 const GET_FEATURED_DEALS_URL = "/api/home/featured-deals";
 const GET_TRENDING_DESTINATION_URL = "/api/home/destinations/trending";
@@ -250,16 +262,73 @@ const HomePage = () => {
 
           <ResponsiveColoredGrid
             component="footer"
-            color="secondary.light"
+            color="secondary.main"
             py={2}
           >
-            <Typography
-              variant="body1"
-              color="text.secondary"
-              align="right"
-              width="100%"
+            <Box
+              sx={{
+                mb: 2,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
             >
-              {`Copyright © Vista Voyage ${new Date().getFullYear()}.`}
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <IconButton onClick={() => navigate("/")}>
+                  <img src={Logo} height={45} width={45} alt="Logo" />
+                </IconButton>
+
+                <Typography variant="h6" color="secondary.contrastText" ml={1}>
+                  Vista Voyage
+                </Typography>
+              </Box>
+              <Box>
+                <IconButton
+                  aria-label="facebook"
+                  href="https://facebook.com"
+                  sx={{ color: "secondary.contrastText" }}
+                >
+                  <FacebookIcon />
+                </IconButton>
+                <IconButton
+                  aria-label="twitter"
+                  href="https://twitter.com"
+                  sx={{ color: "secondary.contrastText" }}
+                >
+                  <TwitterIcon />
+                </IconButton>
+                <IconButton
+                  aria-label="instagram"
+                  href="https://instagram.com"
+                  sx={{ color: "secondary.contrastText" }}
+                >
+                  <InstagramIcon />
+                </IconButton>
+                <IconButton
+                  aria-label="linkedin"
+                  href="https://linkedin.com"
+                  sx={{ color: "secondary.contrastText" }}
+                >
+                  <LinkedInIcon />
+                </IconButton>
+              </Box>
+            </Box>
+
+            <Divider sx={{ bgcolor: "primary.main" }} />
+            <Typography
+              variant="body2"
+              color="secondary.contrastText"
+              textAlign="center"
+              mt={1}
+            >
+              {`Copyright © Vista Voyage ${new Date().getFullYear()} | All rights reserved. Design by `}
+              <Typography
+                component="span"
+                variant="body2"
+                sx={{ color: "primary.main" }}
+              >
+                Mohammad Mansour
+              </Typography>
             </Typography>
           </ResponsiveColoredGrid>
         </>
