@@ -72,10 +72,10 @@ const HotelCard: FC<HotelCardProps> = ({
     <Card
       sx={{
         display: "flex",
-        flexDirection: "row",
+        flexDirection: ["column", "row"],
         alignItems: "center",
         boxShadow: 5,
-        my: 1,
+        my: [2, 1],
         "&:hover": {
           boxShadow: 20,
         },
@@ -83,9 +83,10 @@ const HotelCard: FC<HotelCardProps> = ({
     >
       <CardMedia
         sx={{
-          width: ["150px", "250px"],
+          width: ["100%", "250px"],
           height: "170px",
           marginRight: [0, 2],
+          p: [1, 0],
         }}
         image={roomPhotoUrl}
         title={hotelName}
