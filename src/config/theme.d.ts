@@ -1,6 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Palette, PaletteOptions } from "@mui/material/styles";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TextFieldPropsColorOverrides } from "@mui/material/TextField";
 import { ButtonPropsColorOverrides } from "@mui/material";
 

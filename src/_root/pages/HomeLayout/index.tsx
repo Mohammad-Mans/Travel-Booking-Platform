@@ -12,7 +12,7 @@ import {
 import { Outlet } from "react-router-dom";
 import LuggageIcon from "@mui/icons-material/Luggage";
 import { useNavigate } from "react-router-dom";
-import Logo from "../../../assets/logo/Vista-Voyage-Logo-White.svg"
+import Logo from "../../../assets/logo/Vista-Voyage-Logo-White.svg";
 import { BookingsProvider } from "../../../context/BookingsProvider";
 
 function HomeLayout() {
@@ -32,17 +32,26 @@ function HomeLayout() {
         >
           <Grid item xs={11} lg={9}>
             <Toolbar>
-              <IconButton onClick={() => navigate("/")}>
-                <img src={Logo} height={45} width={45} alt="Logo" />
-              </IconButton>
-
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{ flexGrow: 1, ml: 1 }}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "start",
+                  flexGrow: 1,
+                }}
               >
-                Vista Voyage
-              </Typography>
+                <IconButton onClick={() => navigate("/")}>
+                  <img src={Logo} height={45} width={45} alt="Logo" />
+                </IconButton>
+
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{ ml: 1, display: ["none", "flex"] }}
+                >
+                  Vista Voyage
+                </Typography>
+              </Box>
 
               <Stack direction="row" spacing={2} sx={{ mr: 2 }}>
                 <Button color="inherit" onClick={() => navigate("/")}>
@@ -60,7 +69,12 @@ function HomeLayout() {
                 </Button>
               </Stack>
 
-              <Divider orientation="vertical" variant="middle" flexItem />
+              <Divider
+                orientation="vertical"
+                variant="middle"
+                flexItem
+                sx={{ bgcolor: "secondary.main" }}
+              />
 
               <IconButton
                 color="secondary"
