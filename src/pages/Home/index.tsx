@@ -9,10 +9,6 @@ import {
 import SearchBar from "../../components/features/SearchBar/SearchBar";
 import ResponsiveColoredGrid from "../../components/common/ResponsiveColoredGrid";
 import FeaturedDealsCard from "./components/FeaturedDealsCard";
-import { useEffect, useState } from "react";
-import axios from "../../services/axiosInstance";
-import { AxiosError } from "axios";
-import { useSnackbarError } from "../../context/SnackbarErrorProvider";
 import VisitedHotelCard from "./components/VisitedHotelCard";
 import DestinationCard from "./components/TrendingDestinationCard";
 import SectionHeader from "../../components/common/SectionHeader";
@@ -23,121 +19,29 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-
-const GET_FEATURED_DEALS_URL = "/api/home/featured-deals";
-const GET_TRENDING_DESTINATION_URL = "/api/home/destinations/trending";
-
-type FeaturedDeals = {
-  hotelId: number;
-  hotelName: string;
-  cityName: string;
-  roomPhotoUrl: string;
-  originalRoomPrice: number;
-  finalPrice: number;
-  hotelStarRating: number;
-  discount: number;
-};
-
-type recentlyVisitedHotels = {
-  hotelId: number;
-  hotelName: string;
-  starRating: number;
-  visitDate: string;
-  cityName: string;
-  thumbnailUrl: string;
-  priceLowerBound: number;
-  priceUpperBound: number;
-};
-
-type TrendingDestination = {
-  cityId: number;
-  cityName: string;
-  countryName: string;
-  description: string;
-  thumbnailUrl: string;
-};
+import useFeaturedDeals from "../../services/dataFetching/useFeaturedDeals";
+import useRecentlyVisitedHotels from "../../services/dataFetching/useRecentlyVisitedHotels ";
+import useTrendingDestinations from "../../services/dataFetching/useTrendingDestinations ";
 
 const HomePage = () => {
-  const { setErrorMessage } = useSnackbarError();
   const navigate = useNavigate();
-  const [featuredDeals, setFeaturedDeals] = useState<FeaturedDeals[]>();
-  const [recentlyVisitedHotels, setRecentlyVisitedHotels] =
-    useState<recentlyVisitedHotels[]>();
-  const [trendingDestination, setTrendingDestination] =
-    useState<TrendingDestination[]>();
+  const userId = JSON.parse(localStorage.getItem("user_data") ?? "").userId;
 
-  const [loadingFeaturedDeals, setLoadingFeaturedDeals] = useState(true);
-  const [loadingRecentlyVisitedHotels, setLoadingRecentlyVisitedHotels] =
-    useState(true);
-  const [loadingTrendingDestination, setLoadingTrendingDestination] =
-    useState(true);
-
-  const getFeaturedDeals = async () => {
-    try {
-      const response = await axios.get(GET_FEATURED_DEALS_URL);
-      setFeaturedDeals(response?.data);
-    } catch (err) {
-      const axiosError = err as AxiosError;
-
-      if (!axiosError?.response) {
-        setErrorMessage("No Server Response");
-      } else {
-        setErrorMessage("Couldn't fetch featured deals");
-      }
-    } finally {
-      setLoadingFeaturedDeals(false);
-    }
-  };
-
-  const getRecentlyVisitedHotels = async () => {
-    const userData = JSON.parse(localStorage.getItem("user_data")!);
-    const accessToken = userData.accessToken;
-    const userId = userData.userId;
-    const GET_RECENTLY_VISITED_HOTELS_URL = `/api/home/users/${userId}/recent-hotels`;
-
-    try {
-      const response = await axios.get(GET_RECENTLY_VISITED_HOTELS_URL, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      setRecentlyVisitedHotels(response?.data);
-    } catch (err) {
-      const axiosError = err as AxiosError;
-
-      if (!axiosError?.response) {
-        setErrorMessage("No Server Response");
-      } else {
-        setErrorMessage("Couldn't fetch recently visited hotels");
-      }
-    } finally {
-      setLoadingRecentlyVisitedHotels(false);
-    }
-  };
-
-  const getTrendingDestination = async () => {
-    try {
-      const response = await axios.get(GET_TRENDING_DESTINATION_URL);
-      setTrendingDestination(response?.data);
-    } catch (err) {
-      const axiosError = err as AxiosError;
-
-      if (!axiosError?.response) {
-        setErrorMessage("No Server Response");
-      } else {
-        setErrorMessage("Couldn't fetch trending destinations");
-      }
-    } finally {
-      setLoadingTrendingDestination(false);
-    }
-  };
-
-  useEffect(() => {
-    getRecentlyVisitedHotels();
-    getFeaturedDeals();
-    getTrendingDestination();
-  }, []);
+  const {
+    featuredDeals,
+    loading: loadingFeaturedDeals,
+    error: featuredDealsError,
+  } = useFeaturedDeals();
+  const {
+    recentlyVisitedHotels,
+    loading: loadingRecentlyVisitedHotels,
+    error: recentlyVisitedHotelsError,
+  } = useRecentlyVisitedHotels(userId);
+  const {
+    trendingDestinations,
+    loading: loadingTrendingDestinations,
+    error: trendingDestinationsError,
+  } = useTrendingDestinations();
 
   const viewHotel = (hotleID: number) => {
     navigate(`/hotel/${hotleID}`);
@@ -176,7 +80,7 @@ const HomePage = () => {
 
       {loadingFeaturedDeals ||
       loadingRecentlyVisitedHotels ||
-      loadingTrendingDestination ? (
+      loadingTrendingDestinations ? (
         <Box
           display="flex"
           justifyContent="center"
@@ -196,19 +100,21 @@ const HomePage = () => {
               flexDirection="row"
               justifyContent="center"
             >
-              {featuredDeals?.map((deal) => {
-                return (
-                  <Grid
-                    item
-                    key={deal.hotelId}
-                    onClick={() => {
-                      viewHotel(deal.hotelId);
-                    }}
-                  >
-                    <FeaturedDealsCard {...deal} />
-                  </Grid>
-                );
-              })}
+              {featuredDealsError
+                ? featuredDealsError
+                : featuredDeals.map((deal) => {
+                    return (
+                      <Grid
+                        item
+                        key={deal.hotelId}
+                        onClick={() => {
+                          viewHotel(deal.hotelId);
+                        }}
+                      >
+                        <FeaturedDealsCard {...deal} />
+                      </Grid>
+                    );
+                  })}
             </Grid>
           </ResponsiveColoredGrid>
 
@@ -221,19 +127,21 @@ const HomePage = () => {
               flexDirection="row"
               justifyContent="center"
             >
-              {recentlyVisitedHotels?.slice(0, 3).map((hotel) => {
-                return (
-                  <Grid
-                    item
-                    key={hotel.hotelId}
-                    onClick={() => {
-                      viewHotel(hotel.hotelId);
-                    }}
-                  >
-                    <VisitedHotelCard {...hotel} />
-                  </Grid>
-                );
-              })}
+              {recentlyVisitedHotelsError
+                ? recentlyVisitedHotelsError
+                : recentlyVisitedHotels.slice(0, 3).map((hotel) => {
+                    return (
+                      <Grid
+                        item
+                        key={hotel.hotelId}
+                        onClick={() => {
+                          viewHotel(hotel.hotelId);
+                        }}
+                      >
+                        <VisitedHotelCard {...hotel} />
+                      </Grid>
+                    );
+                  })}
             </Grid>
           </ResponsiveColoredGrid>
 
@@ -246,19 +154,21 @@ const HomePage = () => {
               flexDirection="row"
               justifyContent="center"
             >
-              {trendingDestination?.map((destination) => {
-                return (
-                  <Grid
-                    item
-                    key={destination.cityId}
-                    onClick={() => {
-                      viewCity(destination.cityName);
-                    }}
-                  >
-                    <DestinationCard {...destination} />
-                  </Grid>
-                );
-              })}
+              {trendingDestinationsError
+                ? trendingDestinationsError
+                : trendingDestinations.map((destination) => {
+                    return (
+                      <Grid
+                        item
+                        key={destination.cityId}
+                        onClick={() => {
+                          viewCity(destination.cityName);
+                        }}
+                      >
+                        <DestinationCard {...destination} />
+                      </Grid>
+                    );
+                  })}
             </Grid>
           </ResponsiveColoredGrid>
 
