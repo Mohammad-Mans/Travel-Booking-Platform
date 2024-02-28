@@ -18,9 +18,6 @@ import ResponsiveColoredGrid from "../../components/common/ResponsiveColoredGrid
 import PlaceIcon from "@mui/icons-material/Place";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "../../services/axiosInstance";
-import { useSnackbarError } from "../../context/SnackbarErrorProvider";
-import { AxiosError } from "axios";
 import { GoogleMap, useLoadScript, MarkerF } from "@react-google-maps/api";
 import CustomerReview from "./components/CustomerReview";
 import { useBookings } from "../../context/BookingsProvider";
@@ -28,6 +25,11 @@ import { DesktopDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs, { Dayjs } from "dayjs";
+import useHotelDetails from "./hooks/useHotelDetails";
+import usePictureGallery from "./hooks/useHotelPictureGallery";
+import useAvailableRooms from "./hooks/useAvailableRooms";
+import useHotelReviews from "./hooks/useHotelReviews";
+import { Room } from "../../Types";
 
 const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
@@ -50,56 +52,6 @@ head.insertBefore = <T extends Node>(
   return newElement;
 };
 
-type Hotel = {
-  hotelName: string;
-  location: string;
-  description: string;
-  latitude: number;
-  longitude: number;
-  amenities: Amenity[];
-  starRating: number;
-  availableRooms: number;
-  imageUrl: string;
-  cityId: number;
-};
-
-const hotelInitialValues = {
-  hotelName: "",
-  location: "",
-  description: "",
-  latitude: 0,
-  longitude: 0,
-  amenities: [],
-  starRating: 0,
-  availableRooms: 0,
-  imageUrl: "",
-  cityId: 0,
-};
-
-type Review = {
-  reviewId: number;
-  customerName: string;
-  rating: number;
-  description: string;
-};
-
-type PictureGallery = {
-  id: number;
-  url: string;
-};
-
-type Room = {
-  roomId: number;
-  roomNumber: number;
-  roomPhotoUrl: string;
-  roomType: string;
-  capacityOfAdults: number;
-  capacityOfChildren: number;
-  roomAmenities: Amenity[];
-  price: number;
-  availability: boolean;
-};
-
 const initialRoomData = {
   roomId: 0,
   roomNumber: 0,
@@ -112,24 +64,36 @@ const initialRoomData = {
   availability: false,
 };
 
-type Amenity = {
-  name: string;
-  description: string;
-};
-
 const HotelPage = () => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: googleMapsApiKey,
   });
 
   const { hotelId } = useParams();
-  const { setErrorMessage } = useSnackbarError();
-  const [loadingHotelData, setLoadingHotelData] = useState<boolean>(true);
+  const {
+    hotelDetails,
+    loading: loadingHotelData,
+    error: hotelDetailsError,
+  } = useHotelDetails(hotelId ?? "");
 
-  const [hotelDetails, setHotelDetails] = useState<Hotel>(hotelInitialValues);
-  const [pictureGallery, setPictureGallery] = useState<PictureGallery[]>();
-  const [availableRooms, setAvailableRooms] = useState<Room[]>();
-  const [reviews, setReviews] = useState<Review[]>();
+  const {
+    pictureGallery,
+    loading: loadingGallery,
+    error: galleryError,
+  } = usePictureGallery(hotelId ?? "");
+
+  const {
+    availableRooms,
+    loading: loadingAvailableRooms,
+    error: availableRoomsError,
+  } = useAvailableRooms(hotelId ?? "");
+
+  const {
+    reviews,
+    loading: loadingHotelReviews,
+    error: hotelReviewsError,
+  } = useHotelReviews(hotelId ?? "");
+
   const [openReviewsModal, setOpenReviewsModal] = useState(false);
 
   const [openImageModal, setOpenImageModal] = useState(false);
@@ -149,45 +113,7 @@ const HotelPage = () => {
     setOpenImageModal(false);
   };
 
-  const GET_HOTEL_DETAILS_URL = `/api/hotels/${hotelId}?includeRooms=true`;
-  const GET_PICTURE_GALLERY_URL = `/api/hotels/${hotelId}/gallery`;
-  const GET_AVAILABLE_ROOMS_URL = `/api/hotels/${hotelId}/available-rooms?checkInDate=2%2F2%2F2020&CheckOutDate=1%2F1%2F2030`;
-  const GET_REVIEWS_URL = `/api/hotels/${hotelId}/reviews`;
-
-  const getHotelData = async () => {
-    try {
-      const [
-        hotelDetailsResponse,
-        pictureGalleryResponse,
-        availableRoomsResponse,
-        reviewsResponse,
-      ] = await Promise.all([
-        axios.get(GET_HOTEL_DETAILS_URL),
-        axios.get(GET_PICTURE_GALLERY_URL),
-        axios.get(GET_AVAILABLE_ROOMS_URL),
-        axios.get(GET_REVIEWS_URL),
-      ]);
-
-      setHotelDetails(hotelDetailsResponse.data);
-      setPictureGallery(pictureGalleryResponse.data);
-      setAvailableRooms(availableRoomsResponse.data);
-      setReviews(reviewsResponse.data);
-    } catch (error) {
-      const axiosError = error as AxiosError;
-
-      if (!axiosError?.response) {
-        setErrorMessage("No Server Response");
-      } else {
-        setErrorMessage("Couldn't fetch hotel's data");
-      }
-    } finally {
-      setLoadingHotelData(false);
-    }
-  };
-
   useEffect(() => {
-    getHotelData();
-
     const today = dayjs(new Date());
     const tomorrow = today.add(1, "day");
 
@@ -220,7 +146,10 @@ const HotelPage = () => {
       color="darkBackground.main"
       minHeight="calc(100vh - 64px)"
     >
-      {loadingHotelData ? (
+      {loadingHotelData ||
+      loadingGallery ||
+      loadingHotelReviews ||
+      loadingAvailableRooms ? (
         <Box
           display="flex"
           justifyContent="center"
@@ -238,102 +167,105 @@ const HotelPage = () => {
         >
           <Grid item xs={12} md={3} sx={{ minheight: "500px" }}>
             <Card elevation={3} sx={{ height: "100%", padding: 2 }}>
-              <Typography variant="h4" mb={1}>
-                {hotelDetails.hotelName}
-              </Typography>
-              <Rating value={hotelDetails.starRating} readOnly />
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "start",
-                  my: 1,
-                }}
-              >
-                <PlaceIcon fontSize="small" />
+              {hotelDetailsError ? (
+                <Typography color="error">{hotelDetailsError}</Typography>
+              ) : (
+                <>
+                  <Typography variant="h4" mb={1}>
+                    {hotelDetails.hotelName}
+                  </Typography>
+                  <Rating value={hotelDetails.starRating} readOnly />
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "start",
+                      my: 1,
+                    }}
+                  >
+                    <PlaceIcon fontSize="small" />
 
-                <Typography variant="body1" color="text.secondary">
-                  {hotelDetails.location}
-                </Typography>
-              </Box>
+                    <Typography variant="body1" color="text.secondary">
+                      {hotelDetails.location}
+                    </Typography>
+                  </Box>
+
+                  <Divider />
+
+                  <Typography my={1} variant="body2">
+                    {hotelDetails.description}
+                  </Typography>
+                </>
+              )}
 
               <Divider />
 
-              <Typography my={1} variant="body2">
-                {hotelDetails.description}
-              </Typography>
-
-              <Divider />
-
-              {reviews &&
-                (reviews.length < 3 ? (
-                  reviews?.map((review) => {
+              {hotelReviewsError ? (
+                <Typography color="error">{hotelReviewsError}</Typography>
+              ) : reviews.length < 3 ? (
+                reviews.map((review) => {
+                  return <CustomerReview key={review.reviewId} {...review} />;
+                })
+              ) : (
+                <>
+                  {reviews.slice(0, 2).map((review) => {
                     return <CustomerReview key={review.reviewId} {...review} />;
-                  })
-                ) : (
-                  <>
-                    {reviews.slice(0, 2).map((review) => {
-                      return (
-                        <CustomerReview key={review.reviewId} {...review} />
-                      );
-                    })}
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      onClick={() => setOpenReviewsModal(true)}
-                    >
-                      View all Reviews
-                    </Button>
-                    <Modal
-                      open={openReviewsModal}
-                      onClose={() => setOpenReviewsModal(false)}
+                  })}
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    onClick={() => setOpenReviewsModal(true)}
+                  >
+                    View all Reviews
+                  </Button>
+                  <Modal
+                    open={openReviewsModal}
+                    onClose={() => setOpenReviewsModal(false)}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        maxHeight: 500,
+                        width: 400,
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        bgcolor: "lightBackground.main",
+                        boxShadow: 24,
+                        borderRadius: 1,
+                      }}
                     >
                       <Box
                         sx={{
                           display: "flex",
-                          flexDirection: "column",
                           justifyContent: "space-between",
-                          maxHeight: 500,
-                          width: 400,
-                          position: "absolute",
-                          top: "50%",
-                          left: "50%",
-                          transform: "translate(-50%, -50%)",
-                          bgcolor: "lightBackground.main",
-                          boxShadow: 24,
+                          alignItems: "center",
+                          p: 2,
                           borderRadius: 1,
                         }}
                       >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            p: 2,
-                            borderRadius: 1,
-                          }}
-                        >
-                          <Typography variant="h5">Hotel Reviews</Typography>
+                        <Typography variant="h5">Hotel Reviews</Typography>
 
-                          <IconButton
-                            onClick={() => setOpenReviewsModal(false)}
-                          >
-                            <CloseIcon />
-                          </IconButton>
-                        </Box>
-
-                        <Box sx={{ overflowY: "auto", maxHeight: 400, px: 2 }}>
-                          {reviews.map((review) => (
-                            <div key={review.reviewId}>
-                              <Divider />
-                              <CustomerReview {...review} />
-                            </div>
-                          ))}
-                        </Box>
+                        <IconButton onClick={() => setOpenReviewsModal(false)}>
+                          <CloseIcon />
+                        </IconButton>
                       </Box>
-                    </Modal>
-                  </>
-                ))}
+
+                      <Box sx={{ overflowY: "auto", maxHeight: 400, px: 2 }}>
+                        {reviews.map((review) => (
+                          <div key={review.reviewId}>
+                            <Divider />
+                            <CustomerReview {...review} />
+                          </div>
+                        ))}
+                      </Box>
+                    </Box>
+                  </Modal>
+                </>
+              )}
             </Card>
           </Grid>
           <Grid item xs={12} md={9} sx={{ height: "500px" }}>
@@ -345,20 +277,24 @@ const HotelPage = () => {
                 sx={{ height: 484 }}
               >
                 {" "}
-                {pictureGallery?.map((image, index) => (
-                  <ImageListItem
-                    key={image.id}
-                    onClick={() => handleOpenImage(image.url)}
-                    sx={{
-                      ":hover": {
-                        boxShadow: 5,
-                        cursor: "pointer",
-                      },
-                    }}
-                  >
-                    <img src={image.url} alt={`Hotel Image ${index + 1}`} />
-                  </ImageListItem>
-                ))}
+                {galleryError ? (
+                  <Typography color="error">{galleryError}</Typography>
+                ) : (
+                  pictureGallery.map((image, index) => (
+                    <ImageListItem
+                      key={image.id}
+                      onClick={() => handleOpenImage(image.url)}
+                      sx={{
+                        ":hover": {
+                          boxShadow: 5,
+                          cursor: "pointer",
+                        },
+                      }}
+                    >
+                      <img src={image.url} alt={`Hotel Image ${index + 1}`} />
+                    </ImageListItem>
+                  ))
+                )}
               </ImageList>
             </Card>
 
@@ -459,42 +395,46 @@ const HotelPage = () => {
               }}
             >
               <></>
-              {availableRooms?.map((room) => (
-                <Card key={room.roomId}>
-                  <ImageListItem sx={{ height: "100% !important" }}>
-                    <ImageListItemBar
-                      sx={{
-                        background:
-                          "linear-gradient(to bottom, rgba(0,0,0,0.7)0%, rgba(0,0,0,0.3)70%, rgba(0,0,0,0)100%)",
-                      }}
-                      title={"$" + room.price}
-                      position="top"
-                    />
-                    <img src={room.roomPhotoUrl} alt={room.roomType} />
-                    <ImageListItemBar
-                      title={room.roomType}
-                      subtitle={`${room.capacityOfAdults} ${
-                        room.capacityOfAdults === 1 ? "adult" : "adults"
-                      }, ${room.capacityOfChildren} ${
-                        room.capacityOfChildren === 1 ? "child" : "children"
-                      }`}
-                      actionIcon={
-                        <Button
-                          variant="contained"
-                          color={"secondary"}
-                          sx={{ mr: 2 }}
-                          onClick={() => {
-                            setSelectedRoom(room);
-                            setOpenBookingModal(true);
-                          }}
-                        >
-                          Book
-                        </Button>
-                      }
-                    />
-                  </ImageListItem>
-                </Card>
-              ))}
+              {availableRoomsError ? (
+                <Typography color="error">{availableRoomsError}</Typography>
+              ) : (
+                availableRooms.map((room) => (
+                  <Card key={room.roomId}>
+                    <ImageListItem sx={{ height: "100% !important" }}>
+                      <ImageListItemBar
+                        sx={{
+                          background:
+                            "linear-gradient(to bottom, rgba(0,0,0,0.7)0%, rgba(0,0,0,0.3)70%, rgba(0,0,0,0)100%)",
+                        }}
+                        title={"$" + room.price}
+                        position="top"
+                      />
+                      <img src={room.roomPhotoUrl} alt={room.roomType} />
+                      <ImageListItemBar
+                        title={room.roomType}
+                        subtitle={`${room.capacityOfAdults} ${
+                          room.capacityOfAdults === 1 ? "adult" : "adults"
+                        }, ${room.capacityOfChildren} ${
+                          room.capacityOfChildren === 1 ? "child" : "children"
+                        }`}
+                        actionIcon={
+                          <Button
+                            variant="contained"
+                            color={"secondary"}
+                            sx={{ mr: 2 }}
+                            onClick={() => {
+                              setSelectedRoom(room);
+                              setOpenBookingModal(true);
+                            }}
+                          >
+                            Book
+                          </Button>
+                        }
+                      />
+                    </ImageListItem>
+                  </Card>
+                ))
+              )}
               <Modal
                 open={openBookingModal}
                 onClose={() => setOpenBookingModal(false)}
