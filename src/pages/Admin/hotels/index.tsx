@@ -1,34 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import SearchBar from "../components/SearchBar";
 import ResultsLayout from "../components/ResultsLayout";
 import { Box } from "@mui/material";
-import { AxiosError } from "axios";
-import axios from "../../../services/axiosInstance";
-import { useSnackbarError } from "../../../context/SnackbarErrorProvider";
 import ResultsGrid from "../components/ResultsGrid";
-import { useSnackbarSuccess } from "../../../context/SnackbarSuccessProvider";
 import ActionDrawer from "../components/ActionDrawer";
 import { HotelUpdateFormValidation } from "../../../validation";
 import { HotelCreationFormValidation } from "../../../validation";
-
-const GET_HOTELS_URL = "/api/hotels";
-
-type Hotel = {
-  id: number;
-  name: string;
-  description: string;
-  hotelType: number;
-  starRating: number;
-  latitude: number;
-  longitude: number;
-};
-
-type HotelsParams = {
-  hotelName: string;
-  hotelDescription: string;
-  pageNumber: number;
-  pageSize: number;
-};
+import useHotelActions from "./hooks/useHotelActions";
+import useFetchHotels from "./hooks/useFetchHotels";
 
 const InitialHotelsQuery = {
   hotelName: "",
@@ -48,59 +27,19 @@ const InitialFormState = {
   longitude: 0,
 };
 
-type SubmitProps = {
-  cityId?: string;
-  id: number;
-  name: string;
-  description: string;
-  hotelType: number;
-  starRating: number;
-  latitude: number;
-  longitude: number;
-};
-
 function hotels() {
-  const userData = JSON.parse(localStorage.getItem("user_data")!);
-  const accessToken = userData.accessToken;
-  const { setErrorMessage } = useSnackbarError();
-  const { setSuccessMessage } = useSnackbarSuccess();
-  const [hotels, setHotels] = useState<Hotel[]>();
-  const [loadingHotels, setLoadingHotels] = useState<boolean>(true);
-  const [hotelsParams, setHotelsParams] =
-    useState<HotelsParams>(InitialHotelsQuery);
+  const [hotelsQuery, setHotelsQuery] =
+    useState<HotelsQuery>(InitialHotelsQuery);
+  const { hotels, loadingHotels, fetchHotels } = useFetchHotels(hotelsQuery);
+  const {
+    createHotel,
+    updateHotel,
+    deleteHotel,
+    loading: loadingFormSubmit,
+  } = useHotelActions(fetchHotels);
+
   const [FormState, setFormState] = useState<Hotel>(InitialFormState);
   const [drawerAction, setdrawerAction] = useState<string | null>(null);
-  const [loadingFormSubmit, setLoadingFormSubmit] = useState<boolean>(false);
-
-  const getHotels = async () => {
-    const { hotelName, hotelDescription, pageNumber, pageSize } = hotelsParams;
-
-    const params = {
-      name: hotelName,
-      searchQuery: hotelDescription,
-      pageSize,
-      pageNumber,
-    };
-
-    try {
-      const response = await axios.get(GET_HOTELS_URL, { params });
-      setHotels(response.data);
-    } catch (error) {
-      const axiosError = error as AxiosError;
-
-      if (!axiosError?.response) {
-        setErrorMessage("No Server Response");
-      } else {
-        setErrorMessage("Couldn't fetch hotels");
-      }
-    } finally {
-      setLoadingHotels(false);
-    }
-  };
-
-  useEffect(() => {
-    getHotels();
-  }, [hotelsParams]);
 
   const handleSearch = (value: string, searchBy: string) => {
     let hotelName, hotelDescription;
@@ -113,36 +52,15 @@ function hotels() {
       hotelDescription = value;
     }
 
-    setHotelsParams({ ...hotelsParams, hotelName, hotelDescription });
+    setHotelsQuery({ ...hotelsQuery, hotelName, hotelDescription });
   };
 
   const handleChangePage = (pageNumber: number, pageSize: number) => {
-    setHotelsParams({ ...hotelsParams, pageNumber, pageSize });
+    setHotelsQuery({ ...hotelsQuery, pageNumber, pageSize });
   };
 
-  const handleDelete = async (hotelID: number | null) => {
-    const cityId = await getCityId(hotelID);
-
-    const DELETE_HOTEL_URL = `/api/cities/${cityId}/hotels/${hotelID}`;
-
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-    };
-
-    try {
-      await axios.delete(DELETE_HOTEL_URL, { headers });
-      setSuccessMessage("The hotel was deleted successfully");
-      getHotels();
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      if (!axiosError?.response) {
-        setErrorMessage("No Server Response");
-      } else if (axiosError.response?.status === 404) {
-        setErrorMessage("Specified hotel was not found");
-      } else {
-        setErrorMessage("Couldn't delete hotel");
-      }
-    }
+  const handleDelete = async (hotelId: number | null) => {
+    deleteHotel(hotelId);
   };
 
   const handleUpdate = (selectedRow: any) => {
@@ -160,81 +78,18 @@ function hotels() {
     setdrawerAction(null);
   };
 
-  const handleActionDrawerSubmit = (values: SubmitProps) => {
+  const handleActionDrawerSubmit = (values: HotelSubmitProps) => {
     drawerAction === "update"
       ? handleConfirmUpdate(values)
       : handleConfirmCreate(values);
   };
 
-  const handleConfirmUpdate = async (values: SubmitProps) => {
-    const UPDATE_HOTEL_URL = `/api/hotels/${values.id}`;
-
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-    };
-
-    try {
-      setLoadingFormSubmit(true);
-      await axios.put(UPDATE_HOTEL_URL, values, { headers });
-      setSuccessMessage("The hotel was updated successfully");
-      getHotels();
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      if (!axiosError?.response) {
-        setErrorMessage("No Server Response");
-      } else if (axiosError.response?.status === 404) {
-        setErrorMessage("Specified hotel was not found");
-      } else {
-        setErrorMessage("Couldn't update hotel");
-      }
-    } finally {
-      setLoadingFormSubmit(false);
-      handleActionDrawerClose();
-    }
+  const handleConfirmUpdate = async (values: HotelSubmitProps) => {
+    updateHotel(values.id, values);
   };
 
-  const handleConfirmCreate = async (values: SubmitProps) => {
-    const CREATE_HOTEL_URL = `/api/cities/${values.cityId}/hotels`;
-
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-    };
-
-    try {
-      setLoadingFormSubmit(true);
-      const response = await axios.post(CREATE_HOTEL_URL, values, {
-        headers,
-      });
-
-      setSuccessMessage(`Hotel ${response.data.name} was created successfully`);
-      getHotels();
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      if (!axiosError?.response) {
-        setErrorMessage("No Server Response");
-      } else {
-        setErrorMessage("Couldn't create hotel");
-      }
-    } finally {
-      setLoadingFormSubmit(false);
-      handleActionDrawerClose();
-    }
-  };
-
-  const getCityId = async (hotelId: number | null) => {
-    const GET_HOTEL_INFO = `/api/hotels/${hotelId}`;
-    try {
-      const response = await axios.get(GET_HOTEL_INFO);
-
-      return response.data.cityId;
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      if (!axiosError?.response) {
-        setErrorMessage("No Server Response");
-      } else {
-        setErrorMessage("Couldn't get the City of the hotel");
-      }
-    }
+  const handleConfirmCreate = async (values: HotelSubmitProps) => {
+    createHotel(values);
   };
 
   return (
