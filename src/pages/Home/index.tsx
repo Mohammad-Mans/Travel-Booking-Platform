@@ -19,9 +19,9 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import useFeaturedDeals from "../../services/dataFetching/useFeaturedDeals";
-import useRecentlyVisitedHotels from "../../services/dataFetching/useRecentlyVisitedHotels ";
-import useTrendingDestinations from "../../services/dataFetching/useTrendingDestinations ";
+import useFeaturedDeals from "./hooks/useFeaturedDeals";
+import useRecentlyVisitedHotels from "./hooks/useRecentlyVisitedHotels ";
+import useTrendingDestinations from "./hooks/useTrendingDestinations ";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -100,21 +100,23 @@ const HomePage = () => {
               flexDirection="row"
               justifyContent="center"
             >
-              {featuredDealsError
-                ? featuredDealsError
-                : featuredDeals.map((deal) => {
-                    return (
-                      <Grid
-                        item
-                        key={deal.hotelId}
-                        onClick={() => {
-                          viewHotel(deal.hotelId);
-                        }}
-                      >
-                        <FeaturedDealsCard {...deal} />
-                      </Grid>
-                    );
-                  })}
+              {featuredDealsError ? (
+                <Typography color="error">{featuredDealsError}</Typography>
+              ) : (
+                featuredDeals.map((deal) => {
+                  return (
+                    <Grid
+                      item
+                      key={deal.hotelId}
+                      onClick={() => {
+                        viewHotel(deal.hotelId);
+                      }}
+                    >
+                      <FeaturedDealsCard {...deal} />
+                    </Grid>
+                  );
+                })
+              )}
             </Grid>
           </ResponsiveColoredGrid>
 
@@ -127,21 +129,25 @@ const HomePage = () => {
               flexDirection="row"
               justifyContent="center"
             >
-              {recentlyVisitedHotelsError
-                ? recentlyVisitedHotelsError
-                : recentlyVisitedHotels.slice(0, 3).map((hotel) => {
-                    return (
-                      <Grid
-                        item
-                        key={hotel.hotelId}
-                        onClick={() => {
-                          viewHotel(hotel.hotelId);
-                        }}
-                      >
-                        <VisitedHotelCard {...hotel} />
-                      </Grid>
-                    );
-                  })}
+              {recentlyVisitedHotelsError ? (
+                <Typography color="error">
+                  {recentlyVisitedHotelsError}
+                </Typography>
+              ) : (
+                recentlyVisitedHotels.slice(0, 3).map((hotel) => {
+                  return (
+                    <Grid
+                      item
+                      key={hotel.hotelId}
+                      onClick={() => {
+                        viewHotel(hotel.hotelId);
+                      }}
+                    >
+                      <VisitedHotelCard {...hotel} />
+                    </Grid>
+                  );
+                })
+              )}
             </Grid>
           </ResponsiveColoredGrid>
 
@@ -154,21 +160,25 @@ const HomePage = () => {
               flexDirection="row"
               justifyContent="center"
             >
-              {trendingDestinationsError
-                ? trendingDestinationsError
-                : trendingDestinations.map((destination) => {
-                    return (
-                      <Grid
-                        item
-                        key={destination.cityId}
-                        onClick={() => {
-                          viewCity(destination.cityName);
-                        }}
-                      >
-                        <DestinationCard {...destination} />
-                      </Grid>
-                    );
-                  })}
+              {trendingDestinationsError ? (
+                <Typography color="error">
+                  {trendingDestinationsError}
+                </Typography>
+              ) : (
+                trendingDestinations.map((destination) => {
+                  return (
+                    <Grid
+                      item
+                      key={destination.cityId}
+                      onClick={() => {
+                        viewCity(destination.cityName);
+                      }}
+                    >
+                      <DestinationCard {...destination} />
+                    </Grid>
+                  );
+                })
+              )}
             </Grid>
           </ResponsiveColoredGrid>
 

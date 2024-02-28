@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { axiosInstanceWithInterceptors } from "../../services/axiosInstance";
+import { axiosInstanceWithInterceptors } from "../../../services/axiosInstance";
 
 interface FeaturedDeals {
   hotelId: number;
@@ -26,9 +26,7 @@ const useFeaturedDeals = () => {
         setFeaturedDeals(response.data);
         setError("");
       } catch (error) {
-        setError(
-          " We're sorry, we couldn't fetch the featured deals. Please try again later."
-        );
+        setError("Failed to fetch the featured deals.");
       } finally {
         setLoading(false);
       }

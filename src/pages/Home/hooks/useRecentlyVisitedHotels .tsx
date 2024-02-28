@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { axiosInstanceWithInterceptors } from "../../services/axiosInstance";
+import { axiosInstanceWithInterceptors } from "../../../services/axiosInstance";
 
 interface RecentlyVisitedHotels {
   hotelId: number;
@@ -28,9 +28,7 @@ const useRecentlyVisitedHotels = (userId: number) => {
         setRecentlyVisitedHotels(response.data);
         setError("");
       } catch (error) {
-        setError(
-          " We're sorry, we couldn't fetch the Recently Visited Hotels. Please try again later."
-        );
+        setError("Failed to fetch the Recently Visited Hotels.");
       } finally {
         setLoading(false);
       }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { axiosInstanceWithInterceptors } from "../../services/axiosInstance";
+import { axiosInstanceWithInterceptors } from "../../../services/axiosInstance";
 
 interface TrendingDestination {
   cityId: number;
@@ -25,9 +25,7 @@ const useTrendingDestinations = () => {
         setTrendingDestinations(response.data);
         setError("");
       } catch (error) {
-        setError(
-          " We're sorry, we couldn't fetch the Trending Destinations. Please try again later."
-        );
+        setError("Failed to fetch the Trending Destinations.");
       } finally {
         setLoading(false);
       }
