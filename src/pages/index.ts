@@ -1,0 +1,11 @@
+export { default as HomePage } from "./Home/index";
+export { default as SearchPage } from "./Search/index";
+export { default as HotelPage } from "./Hotel/index";
+export { default as CheckoutPage } from "./Checkout/index";
+export { default as ConfirmationPage } from "./Confirmation/index";
+export { default as AdminPage } from "./Admin/index";
+export { default as CitiesPage } from "./Admin/cities";
+export { default as HotelsPage } from "./Admin/hotels";
+export { default as RoomsPage } from "./Admin/rooms";
+export { default as LoginPage } from "./Login/index";
+export { default as MissingPage } from "./Missing/index";

@@ -1,13 +1,9 @@
 import { useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import AuthLayout from "./_auth/AuthLayout";
-import LoginForm from "./_auth/LoginForm/LoginForm";
-import MissingPage from "./_auth/Missing/MissingPage";
-import RootLayout from "./_root/RootLayout";
+import { HomeLayout, RootLayout, AuthLayout } from "./components/layout";
 import {
   HomePage,
   AdminPage,
-  HomeLayout,
   SearchPage,
   CheckoutPage,
   ConfirmationPage,
@@ -15,7 +11,9 @@ import {
   CitiesPage,
   HotelsPage,
   RoomsPage,
-} from "./_root/pages";
+  LoginPage,
+  MissingPage,
+} from "./pages";
 import "./App.css";
 
 function App() {
@@ -28,7 +26,7 @@ function App() {
   return (
     <Routes>
       <Route element={<AuthLayout />}>
-        <Route path="/login" element={<LoginForm />} />
+        <Route path="/login" element={<LoginPage />} />
       </Route>
 
       <Route element={<RootLayout allowedRole="User" />}>
