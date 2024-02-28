@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Typography,
   Button,
@@ -20,94 +19,46 @@ import { Formik, Form } from "formik";
 import FormikSubmitButton from "../../components/common/FormikSubmitButton";
 import FormikTextField from "../../components/common/FormikTextField";
 import { CheckoutValidation } from "../../validation";
-import axios from "../../services/axiosInstance";
-import { AxiosError } from "axios";
-import { useSnackbarError } from "../../context/SnackbarErrorProvider";
 import RoomDetail from "./components/RoomDetail";
 import ImaskFormikTextField from "../../components/common/IMaskFormikInput";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import KingBedIcon from "@mui/icons-material/KingBed";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import FamilyRestroomIcon from "@mui/icons-material/FamilyRestroom";
+import useSubmitBooking from "./hooks/useSubmitBooking";
 
 const INITIAL_FORM_STATE = {
   firstName: "",
   lastName: "",
   email: "",
-  paymentMethod: "",
+  paymentMethod: "cash",
   cardNumber: "",
   expirationDate: "",
   cvc: "",
   specialRequists: "",
 };
 
-type SubmitProps = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  paymentMethod: string;
-  cardNumber: string;
-  expirationDate: string;
-  cvc: string;
-  specialRequists: string;
-};
-
-const POST_BOOKINGS_URL = "/api/bookings";
-
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const goBack = () => navigate(-1);
-
   const { bookedRoom, clearBooking } = useBookings();
+  const { loading, submitBooking } = useSubmitBooking();
 
-  const [loading, setLoading] = useState(false);
-  const { setErrorMessage } = useSnackbarError();
+  const handleSubmit = (values: SubmitProps) => {
+    const bookingData = {
+      customerName: `${values.firstName} ${values.lastName}`,
+      hotelName: bookedRoom?.hotelName,
+      roomNumber: bookedRoom?.roomNumber.toString(),
+      roomType: bookedRoom?.roomType,
+      bookingDateTime: new Date().toISOString(),
+      totalCost: bookedRoom?.totalCost,
+      paymentMethod: values.paymentMethod,
+    };
 
-  const handleSubmit = async (values: SubmitProps) => {
-    try {
-      setLoading(true);
-
-      const data = {
-        customerName: `${values.firstName} ${values.lastName}`,
-        hotelName: bookedRoom?.hotelName,
-        roomNumber: bookedRoom?.roomNumber.toString(),
-        roomType: bookedRoom?.roomType,
-        bookingDateTime: new Date().toISOString(),
-        totalCost: bookedRoom?.totalCost,
-        paymentMethod: values.paymentMethod,
-      };
-
-      const userData = JSON.parse(localStorage.getItem("user_data")!);
-      const accessToken = userData.accessToken;
-
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      };
-
-      const response = await axios.post(POST_BOOKINGS_URL, data, {
-        headers,
-      });
-
-      const confirmationNumber = response.data.confirmationNumber;
-
-      if (response.data.bookingStatus === "Confirmed") {
-        navigate(`/confirmation/${confirmationNumber}`);
-        clearBooking();
-      } else {
-        setErrorMessage("Something went wrong. Please try again");
-      }
-    } catch (err) {
-      const axiosError = err as AxiosError;
-
-      if (!axiosError?.response) {
-        setErrorMessage("No Server Response");
-      } else {
-        setErrorMessage("Checkout Failed");
-      }
-    } finally {
-      setLoading(false);
-    }
+    submitBooking(bookingData, (confirmationNumber: string) => {
+      navigate(`/confirmation/${confirmationNumber}`);
+      clearBooking();
+    });
   };
 
   return (
