@@ -57,7 +57,6 @@ const SearchComponent: React.FC<SearchComponentProps> = (props) => {
   >([]);
   const loading = openAutocomplete && autocompleteOptions.length === 0;
 
-
   useEffect(() => {
     let active = true;
 
@@ -230,47 +229,48 @@ const SearchComponent: React.FC<SearchComponentProps> = (props) => {
           }}
         />
 
-        <Grid item xs={5.5} md={2} m={1}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DesktopDatePicker
-              label="Check in"
-              format="DD-MM-YYYY"
-              value={checkIn}
-              minDate={dayjs(new Date())}
-              onChange={(newValue) => {
-                Number(newValue!.format("YYYYMMDD")) >
-                Number(checkOut!.format("YYYYMMDD"))
-                  ? setCheckOut(newValue!.add(1, "day"))
-                  : null;
-                setCheckIn(newValue);
-              }}
-              showDaysOutsideCurrentMonth
-              sx={{ width: "100%" }}
-            />
-          </LocalizationProvider>
-        </Grid>
+        <Grid item xs={12} md={4.5} m={1}>
+          <Box display="flex" justifyContent="space-between">
 
-        <Divider
-          orientation="vertical"
-          variant="middle"
-          flexItem
-          aria-hidden="true"
-        />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DesktopDatePicker
+                label="Check in"
+                format="DD-MM-YYYY"
+                value={checkIn}
+                minDate={dayjs(new Date())}
+                onChange={(newValue) => {
+                  Number(newValue!.format("YYYYMMDD")) >
+                  Number(checkOut!.format("YYYYMMDD"))
+                    ? setCheckOut(newValue!.add(1, "day"))
+                    : null;
+                  setCheckIn(newValue);
+                }}
+                showDaysOutsideCurrentMonth
+                sx={{ width: "100%" }}
+              />
+            </LocalizationProvider>
 
-        <Grid item xs={5.5} md={2} m={1}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DesktopDatePicker
-              label="Check out"
-              format="DD-MM-YYYY"
-              value={checkOut}
-              minDate={checkIn}
-              onChange={(newValue) => {
-                setCheckOut(newValue);
-              }}
-              showDaysOutsideCurrentMonth
-              sx={{ width: "100%" }}
+            <Divider
+              orientation="vertical"
+              flexItem
+              aria-hidden="true"
+              sx={{mx:2}}
             />
-          </LocalizationProvider>
+
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DesktopDatePicker
+                label="Check out"
+                format="DD-MM-YYYY"
+                value={checkOut}
+                minDate={checkIn}
+                onChange={(newValue) => {
+                  setCheckOut(newValue);
+                }}
+                showDaysOutsideCurrentMonth
+                sx={{ width: "100%" }}
+              />
+            </LocalizationProvider>
+          </Box>
         </Grid>
 
         <Divider
