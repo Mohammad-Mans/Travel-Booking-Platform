@@ -3,7 +3,7 @@ import SearchBar from "../components/SearchBar";
 import ResultsLayout from "../components/ResultsLayout";
 import { Box } from "@mui/material";
 import { AxiosError } from "axios";
-import axios from "../../../api/axios";
+import axios from "../../../services/axiosInstance";
 import { useSnackbarError } from "../../../context/SnackbarErrorProvider";
 import ResultsGrid from "../components/ResultsGrid";
 import { useSnackbarSuccess } from "../../../context/SnackbarSuccessProvider";

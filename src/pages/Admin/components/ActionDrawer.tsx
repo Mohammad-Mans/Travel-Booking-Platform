@@ -5,7 +5,7 @@ import FormikSubmitButton from "../../../components/common/FormikSubmitButton";
 import { Drawer, Box, Button, Grid, MenuItem } from "@mui/material";
 import * as Yup from "yup";
 import { AxiosError } from "axios";
-import axios from "../../../api/axios";
+import axios from "../../../services/axiosInstance";
 import { useSnackbarError } from "../../../context/SnackbarErrorProvider";
 
 const GET_CITIES_URL = "/api/cities";

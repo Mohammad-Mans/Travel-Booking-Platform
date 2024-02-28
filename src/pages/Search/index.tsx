@@ -24,7 +24,7 @@ import { useSearchParams } from "react-router-dom";
 import ResponsiveColoredGrid from "../../components/common/ResponsiveColoredGrid";
 import SearchBar from "../../components/features/SearchBar/SearchBar";
 import { useEffect, useState } from "react";
-import axios from "../../api/axios";
+import axios from "../../services/axiosInstance";
 import HotelCard from "./Components/HotelCard";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";

@@ -12,12 +12,7 @@ import { Formik, Form } from "formik";
 import FormikTextField from "../../components/common/FormikTextField";
 import FormikSubmitButton from "../../components/common/FormikSubmitButton";
 import { LoginValidation } from "../../validation";
-import axios from "../../api/axios";
-import { AxiosError } from "axios";
-import { useNavigate } from "react-router-dom";
-import { useSnackbarError } from "../../context/SnackbarErrorProvider";
-
-const LOGIN_URL = "/api/auth/authenticate";
+import { useLogin } from "../../services/authentication/useLogin";
 
 const INITIAL_FORM_STATE = {
   userName: "",
@@ -30,49 +25,12 @@ type SubmitProps = {
 };
 
 const LoginPage = (): JSX.Element => {
-  const [loading, setLoading] = useState(false);
-  const { setErrorMessage } = useSnackbarError();
-
-  const navigate = useNavigate();
+  const { login, loading } = useLogin();
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = async (values: SubmitProps) => {
-    try {
-      setLoading(true);
-      const response = await axios.post(LOGIN_URL, JSON.stringify(values), {
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const accessToken = response?.data?.authentication;
-      const role = response?.data?.userType;
-      const payload = accessToken.split(".")[1];
-      const decodedPayload = JSON.parse(atob(payload));
-      const userId = decodedPayload["user_id"];
-
-      localStorage.setItem(
-        "user_data",
-        JSON.stringify({ role, accessToken, userId })
-      );
-
-      if (role === "User") {
-        navigate("/");
-      } else if (role === "Admin") {
-        navigate("/admin");
-      }
-    } catch (err) {
-      const axiosError = err as AxiosError;
-
-      if (!axiosError?.response) {
-        setErrorMessage("No Server Response");
-      } else if (axiosError.response?.status === 401) {
-        setErrorMessage("Unauthorized Access");
-      } else {
-        setErrorMessage("Login Failed");
-      }
-    } finally {
-      setLoading(false);
-    }
+  const handleSubmit = (values: SubmitProps) => {
+    login(values);
   };
 
   return (

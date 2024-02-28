@@ -13,7 +13,7 @@ import ResponsiveColoredGrid from "../../components/common/ResponsiveColoredGrid
 import { useParams } from "react-router-dom";
 import jsPDF from "jspdf";
 import { useSnackbarError } from "../../context/SnackbarErrorProvider";
-import axios from "../../api/axios";
+import axios from "../../services/axiosInstance";
 import { AxiosError } from "axios";
 import ConfirmationDetail from "./components/confirmationDetail";
 import PrintIcon from "@mui/icons-material/Print";

@@ -18,7 +18,7 @@ import ResponsiveColoredGrid from "../../components/common/ResponsiveColoredGrid
 import PlaceIcon from "@mui/icons-material/Place";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "../../api/axios";
+import axios from "../../services/axiosInstance";
 import { useSnackbarError } from "../../context/SnackbarErrorProvider";
 import { AxiosError } from "axios";
 import { GoogleMap, useLoadScript, MarkerF } from "@react-google-maps/api";

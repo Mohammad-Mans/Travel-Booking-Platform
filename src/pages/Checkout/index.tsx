@@ -20,7 +20,7 @@ import { Formik, Form } from "formik";
 import FormikSubmitButton from "../../components/common/FormikSubmitButton";
 import FormikTextField from "../../components/common/FormikTextField";
 import { CheckoutValidation } from "../../validation";
-import axios from "../../api/axios";
+import axios from "../../services/axiosInstance";
 import { AxiosError } from "axios";
 import { useSnackbarError } from "../../context/SnackbarErrorProvider";
 import RoomDetail from "./components/RoomDetail";

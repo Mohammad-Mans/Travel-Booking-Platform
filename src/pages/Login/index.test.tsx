@@ -2,7 +2,7 @@ import { screen, waitFor } from "@testing-library/react";
 import render from "../../test/render";
 import LoginPage from ".";
 import userEvent from "@testing-library/user-event";
-import axios from "../../api/axios";
+import axios from "../../services/axiosInstance";
 import * as router from "react-router";
 
 const getters = {
@@ -79,8 +79,7 @@ const loginUser = async (mockedUser: MockedUser) => {
 describe("LoginPage", () => {
   describe("Smoke Tests", () => {
     beforeEach(() => {
-      render(<LoginPage
-       />);
+      render(<LoginPage />);
     });
 
     it("Should render LoginPage Component Correctly", () => {
@@ -109,8 +108,7 @@ describe("LoginPage", () => {
 
   describe("Validations", () => {
     beforeEach(() => {
-      render(<LoginPage
-       />);
+      render(<LoginPage />);
     });
 
     it("Should show User Name is required & Password is required when the user login with empty fields", async () => {
@@ -150,8 +148,7 @@ describe("LoginPage", () => {
 
   describe("Functionality", () => {
     beforeEach(() => {
-      render(<LoginPage
-       />);
+      render(<LoginPage />);
     });
 
     it("Should call Login API upon submitting the form with the required data", async () => {
@@ -218,8 +215,7 @@ describe("LoginPage", () => {
     vi.spyOn(router, "useNavigate").mockImplementation(() => mockNavigate);
 
     beforeEach(() => {
-      render(<LoginPage
-       />);
+      render(<LoginPage />);
     });
 
     it("Should navigate to home page on successful login as User", async () => {

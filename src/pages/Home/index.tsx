@@ -10,7 +10,7 @@ import SearchBar from "../../components/features/SearchBar/SearchBar";
 import ResponsiveColoredGrid from "../../components/common/ResponsiveColoredGrid";
 import FeaturedDealsCard from "./components/FeaturedDealsCard";
 import { useEffect, useState } from "react";
-import axios from "../../api/axios";
+import axios from "../../services/axiosInstance";
 import { AxiosError } from "axios";
 import { useSnackbarError } from "../../context/SnackbarErrorProvider";
 import VisitedHotelCard from "./components/VisitedHotelCard";
