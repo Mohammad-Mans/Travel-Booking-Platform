@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { plainAxiosInstance } from "../../services/axiosInstance";
+import { plainAxiosInstance } from "../../../services/axiosInstance";
 import { AxiosError } from "axios";
-import { useSnackbarError } from "../../context/SnackbarErrorProvider";
+import { useSnackbarError } from "../../../context/SnackbarErrorProvider";
 
 interface SubmitProps {
   userName: string;

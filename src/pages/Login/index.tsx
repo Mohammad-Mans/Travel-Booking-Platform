@@ -12,7 +12,7 @@ import { Formik, Form } from "formik";
 import FormikTextField from "../../components/common/FormikTextField";
 import FormikSubmitButton from "../../components/common/FormikSubmitButton";
 import { LoginValidation } from "../../validation";
-import { useLogin } from "../../services/authentication/useLogin";
+import { useLogin } from "./hooks/useLogin";
 
 const INITIAL_FORM_STATE = {
   userName: "",
