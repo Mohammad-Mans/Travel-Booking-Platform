@@ -38,6 +38,8 @@ Below are the frontend technologies utilized in this project:
 - **Form Handling:**
   - [Formik](https://formik.org/) - A powerful and flexible form management library for React.
   - [Yup](https://www.npmjs.com/package/yup) - A schema-based validation library for JavaScript.
+  - [IMask](https://imask.js.org/) - A versatile input mask library for various formats, enhancing form input usability and data collection accuracy.
+
 
 - **Server Calls:**
   - [Axios](https://www.npmjs.com/package/axios) - A popular promise-based HTTP client for making API requests.
@@ -56,6 +58,9 @@ Below are the frontend technologies utilized in this project:
 
 - **Map Integration:**
   - [Google Maps](https://developers.google.com/maps) - Embed interactive maps and geospatial features in your web applications.
+    
+- **UI Enhancements:**
+  - [react-sticky-box](https://react-sticky-box.codecks.io/) - A React component that makes elements sticky as you scroll, perfect for sidebars and ads.
 
 - **Testing:**
   - [Vitest](https://vitest.dev/guide/migration.html) - A lightning-fast unit test framework powered by Vite.
