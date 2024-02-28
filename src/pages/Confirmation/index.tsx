@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useRef } from "react";
 import {
   Avatar,
   Box,
@@ -12,77 +12,17 @@ import {
 import ResponsiveColoredGrid from "../../components/common/ResponsiveColoredGrid";
 import { useParams } from "react-router-dom";
 import jsPDF from "jspdf";
-import { useSnackbarError } from "../../context/SnackbarErrorProvider";
-import axios from "../../services/axiosInstance";
-import { AxiosError } from "axios";
 import ConfirmationDetail from "./components/confirmationDetail";
 import PrintIcon from "@mui/icons-material/Print";
 import DownloadIcon from "@mui/icons-material/Download";
 import Logo from "../../assets/logo/Vista-Voyage-Logo-DARK-MAGENTA.png";
 import { useReactToPrint } from "react-to-print";
-
-type ConfirmationData = {
-  customerName: string;
-  hotelName: string;
-  roomNumber: string;
-  roomType: string;
-  bookingDate: string;
-  totalCost: number;
-  paymentMethod: string;
-  bookingStatus: string;
-  confirmationNumber: string;
-};
+import useFetchConfirmationData from "./hooks/useFetchConfirmationData";
 
 const ConfirmationPage = () => {
   const { confirmationNumber } = useParams();
-  const { setErrorMessage } = useSnackbarError();
-  const [loadingConfirmationData, setLoadingConfirmationData] =
-    useState<boolean>(true);
-
-  const [confirmationData, setConfirmationData] = useState<ConfirmationData>();
-
-  const GET_BOOKING_URL = "/api/bookings/" + confirmationNumber?.split("-")[1];
-
-  const getHotelData = async () => {
-    try {
-      const userData = JSON.parse(localStorage.getItem("user_data")!);
-      const accessToken = userData.accessToken;
-
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      };
-
-      const response = await axios.get(GET_BOOKING_URL, { headers });
-
-      const formattedDate = new Date(
-        response.data.bookingDateTime
-      ).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
-
-      setConfirmationData({
-        ...response.data,
-        bookingDate: formattedDate as string,
-      });
-    } catch (error) {
-      const axiosError = error as AxiosError;
-
-      if (!axiosError?.response) {
-        setErrorMessage("No Server Response");
-      } else {
-        setErrorMessage("Couldn't fetch the confirmation data");
-      }
-    } finally {
-      setLoadingConfirmationData(false);
-    }
-  };
-
-  useEffect(() => {
-    getHotelData();
-  }, []);
+  const { loadingConfirmationData, confirmationData } =
+    useFetchConfirmationData(confirmationNumber ?? "");
 
   const confirmationRef = useRef<HTMLDivElement | null>(null);
 
