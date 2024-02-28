@@ -149,6 +149,7 @@ Upon opening the project, you will land on the login page. There are two login o
    - Delete entity by clicking on the trash icon located at the end of each row.
 
 ## :books: References
+- [React Folder Structure Best Practices](https://www.youtube.com/watch?v=Mm6_DlO5vvs)
 - [React Login, Registration, and Authentication](https://www.youtube.com/playlist?list=PL0Zuz27SZ-6PRCpm9clX0WiBEMB70FWwd)
 - [React Material UI Tutorial](https://www.youtube.com/playlist?list=PLC3y8-rFHvwh-K9mDlrrcDywl7CeVL2rO)
 - [Use Formik and Yup With MUI](https://www.youtube.com/watch?v=MV9NC3FoCmM&list=LL&index=12)
