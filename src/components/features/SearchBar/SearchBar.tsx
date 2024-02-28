@@ -1,99 +1,44 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   TextField,
   Button,
   Grid,
   Paper,
   Divider,
-  CircularProgress,
   Box,
   Popover,
   Typography,
   IconButton,
 } from "@mui/material";
-import Autocomplete, { autocompleteClasses } from "@mui/material/Autocomplete";
-import SearchIcon from "@mui/icons-material/Search";
 import BedIcon from "@mui/icons-material/Bed";
-import { DesktopDatePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs, { Dayjs } from "dayjs";
-import axios from "../../../services/axiosInstance";
-import { AxiosError } from "axios";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { useNavigate } from "react-router-dom";
-import { useSnackbarError } from "../../../context/SnackbarErrorProvider";
+import DatePickers from "./components/DatePickers";
+import useFetchCities from "./hooks/useFetchCities";
+import CitySearch from "./components/CitySearch";
 
-const GET_CITIES_URL = "/api/cities";
-
-type City = {
-  name: string;
-};
-
-type GuestsAndRooms = {
+interface GuestsAndRooms {
   adults: number;
   children: number;
   rooms: number;
   popoverOpen: boolean;
-};
+}
 
-type SearchComponentProps = {
+interface SearchComponentProps {
   city?: string;
   checkInDate?: string | null;
   checkOutDate?: string | null;
   adults?: string | null;
   children?: string | null;
   numberOfRooms?: string | null;
-};
+}
 
 const SearchComponent: React.FC<SearchComponentProps> = (props) => {
-  const { setErrorMessage } = useSnackbarError();
-
   const [city, setCity] = useState<string | null>(props.city || null);
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
-  const [autocompleteOptions, setautocompleteOptions] = useState<
-    readonly string[]
-  >([]);
-  const loading = openAutocomplete && autocompleteOptions.length === 0;
-
-  useEffect(() => {
-    let active = true;
-
-    if (!loading) {
-      return undefined;
-    }
-
-    (async () => {
-      try {
-        const response = await axios.get(GET_CITIES_URL);
-
-        const cityNames = response.data.map((city: City) => city.name);
-
-        if (active) {
-          setautocompleteOptions([...cityNames]);
-        }
-      } catch (err) {
-        const axiosError = err as AxiosError;
-
-        if (!axiosError?.response) {
-          setErrorMessage("No Server Response");
-        } else {
-          setErrorMessage("Couldn't fetch cities");
-        }
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [GET_CITIES_URL, loading]);
-
-  useEffect(() => {
-    if (!openAutocomplete) {
-      setautocompleteOptions([]);
-    }
-  }, [openAutocomplete]);
+  const { loading, options } = useFetchCities(openAutocomplete);
 
   const [checkIn, setCheckIn] = useState<Dayjs | null>(null);
   const [checkOut, setCheckOut] = useState<Dayjs | null>(null);
@@ -173,48 +118,16 @@ const SearchComponent: React.FC<SearchComponentProps> = (props) => {
         }}
       >
         <Grid item xs={12} md={2.5} m={1}>
-          {
-            <Autocomplete
-              freeSolo={false}
-              popupIcon={<SearchIcon />}
-              autoHighlight
-              open={openAutocomplete}
-              onOpen={() => {
-                setOpenAutocomplete(true);
-              }}
-              onClose={() => {
-                setOpenAutocomplete(false);
-              }}
-              options={autocompleteOptions}
-              getOptionLabel={(option) => option}
-              isOptionEqualToValue={(option, value) => option === value}
-              loading={loading}
-              sx={{
-                [`& .${autocompleteClasses.popupIndicator}`]: {
-                  transform: "none",
-                },
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Search for cities..."
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <Fragment>
-                        {loading ? <CircularProgress size={20} /> : null}
-                        {params.InputProps.endAdornment}
-                      </Fragment>
-                    ),
-                  }}
-                />
-              )}
-              value={city}
-              onChange={(_event, newValue: string | null) => {
-                setCity(newValue);
-              }}
-            />
-          }
+          <CitySearch
+            {...{
+              city,
+              setCity,
+              open: openAutocomplete,
+              setOpen: setOpenAutocomplete,
+              loading,
+              options,
+            }}
+          />
         </Grid>
 
         <Divider
@@ -231,44 +144,7 @@ const SearchComponent: React.FC<SearchComponentProps> = (props) => {
 
         <Grid item xs={12} md={4.5} m={1}>
           <Box display="flex" justifyContent="space-between">
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DesktopDatePicker
-                label="Check in"
-                format="DD-MM-YYYY"
-                value={checkIn}
-                minDate={dayjs(new Date())}
-                onChange={(newValue) => {
-                  Number(newValue!.format("YYYYMMDD")) >
-                  Number(checkOut!.format("YYYYMMDD"))
-                    ? setCheckOut(newValue!.add(1, "day"))
-                    : null;
-                  setCheckIn(newValue);
-                }}
-                showDaysOutsideCurrentMonth
-                sx={{ width: "100%" }}
-              />
-            </LocalizationProvider>
-
-            <Divider
-              orientation="vertical"
-              flexItem
-              aria-hidden="true"
-              sx={{ mx: 2 }}
-            />
-
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DesktopDatePicker
-                label="Check out"
-                format="DD-MM-YYYY"
-                value={checkOut}
-                minDate={checkIn}
-                onChange={(newValue) => {
-                  setCheckOut(newValue);
-                }}
-                showDaysOutsideCurrentMonth
-                sx={{ width: "100%" }}
-              />
-            </LocalizationProvider>
+            <DatePickers {...{ checkIn, setCheckIn, checkOut, setCheckOut }} />
           </Box>
         </Grid>
 
