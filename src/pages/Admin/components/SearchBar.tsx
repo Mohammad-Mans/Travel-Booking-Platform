@@ -11,7 +11,7 @@ import {
   Paper,
 } from "@mui/material";
 
-type SearchProps = {
+interface SearchProps {
   label: string;
   onSearch: (value: string, searchBy: string) => void;
 };

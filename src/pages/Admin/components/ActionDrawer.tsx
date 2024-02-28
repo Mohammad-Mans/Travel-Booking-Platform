@@ -1,44 +1,18 @@
-import { FC, useState, useEffect } from "react";
+import { FC } from "react";
 import { Form, Formik } from "formik";
 import FormikTextField from "../../../components/common/FormikTextField";
 import FormikSubmitButton from "../../../components/common/FormikSubmitButton";
 import { Drawer, Box, Button, Grid, MenuItem } from "@mui/material";
 import * as Yup from "yup";
-import { AxiosError } from "axios";
-import axios from "../../../services/axiosInstance";
-import { useSnackbarError } from "../../../context/SnackbarErrorProvider";
+import useFetchCities from "../cities/hooks/useFetchCities";
+import useFetchHotels from "../hotels/hooks/useFetchHotels";
 
-const GET_CITIES_URL = "/api/cities";
-const GET_HOTELS_URL = "/api/hotels";
-
-type Field = {
+interface Field {
   name: keyof City | keyof Hotel | keyof Room;
   label: string;
 };
 
-type City = {
-  id: number;
-  name: string;
-  description: string;
-};
-
-type Hotel = {
-  id: number;
-  name: string;
-  description: string;
-  hotelType: number;
-  starRating: number;
-  latitude: number;
-  longitude: number;
-};
-
-type Room = {
-  id: number;
-  roomNumber: string;
-  cost: string;
-};
-
-type ActionDrawerProps = {
+interface ActionDrawerProps {
   dataType: string;
   action: string | null;
   fields: Field[];
@@ -48,6 +22,20 @@ type ActionDrawerProps = {
   onSubmit: (values: any) => void;
   onClose: () => void;
   loading: boolean;
+};
+
+const AllHotelsQuery = {
+  hotelName: "",
+  hotelDescription: "",
+  pageNumber: 1,
+  pageSize: 120,
+};
+
+const AllCitiesQuery = {
+  cityName: "",
+  cityDescription: "",
+  pageNumber: 1,
+  pageSize: 10,
 };
 
 const ActionDrawer: FC<ActionDrawerProps> = ({
@@ -61,44 +49,10 @@ const ActionDrawer: FC<ActionDrawerProps> = ({
   onSubmit,
   loading,
 }) => {
-  const [cities, setCities] = useState<City[]>([]);
-  const [hotels, setHotels] = useState<Hotel[]>([]);
-  const { setErrorMessage } = useSnackbarError();
 
-  const getCities = async () => {
-    try {
-      const response = await axios.get(GET_CITIES_URL);
-      setCities(response.data);
-    } catch (err) {
-      const axiosError = err as AxiosError;
+  const {cities} = useFetchCities(AllCitiesQuery);
+  const {hotels} = useFetchHotels(AllHotelsQuery);
 
-      if (!axiosError?.response) {
-        setErrorMessage("No Server Response");
-      } else {
-        setErrorMessage("Couldn't fetch cities");
-      }
-    }
-  };
-
-  const getHotels = async () => {
-    try {
-      const response = await axios.get(GET_HOTELS_URL);
-      setHotels(response.data);
-    } catch (err) {
-      const axiosError = err as AxiosError;
-
-      if (!axiosError?.response) {
-        setErrorMessage("No Server Response");
-      } else {
-        setErrorMessage("Couldn't fetch hotels");
-      }
-    }
-  };
-
-  useEffect(() => {
-    dataType === "hotels" ? getCities() : "";
-    dataType === "rooms" ? getHotels() : "";
-  }, []);
 
   return (
     <Drawer

@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import { FC, ReactNode } from "react";
 
-type ResultsLayoutProps = {
+interface ResultsLayoutProps {
   isLoading: boolean;
   onCreate: () => void;
   children: ReactNode;

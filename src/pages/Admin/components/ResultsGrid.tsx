@@ -19,34 +19,12 @@ import {
 import TablePagination from "@mui/material/TablePagination";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
 
-type Column = {
+interface Column {
   field: keyof Hotel | keyof City | keyof Room;
   headerName: string;
 };
 
-type City = {
-  id: number;
-  name: string;
-  description: string;
-};
-
-type Hotel = {
-  id: number;
-  name: string;
-  description: string;
-  hotelType: number;
-  starRating: number;
-  latitude: number;
-  longitude: number;
-};
-
-type Room = {
-  id: number;
-  roomNumber: string;
-  cost: string;
-};
-
-type ResultsGridProps = {
+interface ResultsGridProps {
   dataType: string;
   data: (City | Hotel | Room)[];
   columnHeaders: Column[];
