@@ -2,8 +2,19 @@ import { screen, waitFor } from "@testing-library/react";
 import render from "../../test/render";
 import LoginPage from ".";
 import userEvent from "@testing-library/user-event";
-import axios from "../../services/axiosInstance";
+import  axios, { AxiosResponse } from "axios";
 import * as router from "react-router";
+import { useNavigate } from "react-router-dom";
+
+import { vi } from 'vitest';
+
+// Cast the axios mock to include Vitest's mocking functions
+vi.mock('axios', () => ({
+  post: vi.fn(() => Promise.resolve({ data: {} } as AxiosResponse)),
+}));
+
+// Use vi.mocked to provide type information for the mocked axios.post
+// const mockedAxiosPost = vi.mocked(axios.post);
 
 const getters = {
   getPersonIcon: () => screen.getByTestId(/PersonIcon/),
@@ -146,9 +157,34 @@ describe("LoginPage", () => {
     });
   });
 
-  describe("Functionality", () => {
+  describe.only("Functionality", () => {
     beforeEach(() => {
       render(<LoginPage />);
+    });
+
+    it('should call login API and navigate on successful login', async () => {
+      const mockNavigate = vi.fn();
+      vi.mocked(useNavigate).mockImplementation(() => mockNavigate);
+      // axios.post.mockResolvedValue({ data: { authentication: 'token', userType: 'User' } }); // Mock successful login response
+  
+      render(<LoginPage />);
+      const userNameInput = screen.getByLabelText(/User Name/);
+      const passwordInput = screen.getByLabelText(/Password/);
+      const signInButton = screen.getByRole('button', { name: /Sign In/ });
+  
+      // Simulate user input
+      await userEvent.type(userNameInput, 'testUser');
+      await userEvent.type(passwordInput, 'testPassword');
+      userEvent.click(signInButton);
+  
+      await waitFor(() => {
+        expect(axios.post).toHaveBeenCalledWith(
+          '/api/auth/authenticate', // Ensure this matches your actual login URL
+          JSON.stringify({ userName: 'testUser', password: 'testPassword' }),
+          { headers: { 'Content-Type': 'application/json' } },
+        );
+        expect(mockNavigate).toHaveBeenCalledWith('/'); // Or '/admin', depending on the userType in the response
+      });
     });
 
     it("Should call Login API upon submitting the form with the required data", async () => {
