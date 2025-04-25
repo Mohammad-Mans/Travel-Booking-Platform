@@ -24,7 +24,7 @@ import { useSearchParams } from "react-router-dom";
 import ResponsiveColoredGrid from "../../components/common/ResponsiveColoredGrid";
 import SearchBar from "../../components/features/SearchBar/SearchBar";
 import { useEffect, useState } from "react";
-import HotelCard from "./components/HotelCardTMP";
+import HotelCard from "./components/HotelCard";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
